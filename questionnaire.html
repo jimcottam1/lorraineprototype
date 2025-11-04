@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wellness Questionnaire - Reiki Your Path to Wellness</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+    <!-- EmailJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function(){
+            // Initialize EmailJS with your public key
+            emailjs.init('YOUR_EMAILJS_PUBLIC_KEY'); // Replace with your actual public key
+        })();
+    </script>
+    <style>
+        .questionnaire-container {
+            max-width: 800px;
+            margin: 100px auto 50px;
+            padding: 40px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .questionnaire-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .questionnaire-header h1 {
+            color: #2c5f4f;
+            margin-bottom: 10px;
+        }
+        .questionnaire-header p {
+            color: #666;
+        }
+        .form-group {
+            margin-bottom: 25px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            font-family: 'Lato', sans-serif;
+        }
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        .form-group small {
+            display: block;
+            margin-top: 5px;
+            color: #666;
+            font-size: 14px;
+        }
+        .form-group.checkbox {
+            display: flex;
+            align-items: flex-start;
+        }
+        .form-group.checkbox input {
+            width: auto;
+            margin-right: 10px;
+            margin-top: 3px;
+        }
+        .form-group.checkbox label {
+            margin-bottom: 0;
+            font-weight: 400;
+        }
+        .submit-btn {
+            background: #2c5f4f;
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 4px;
+            font-size: 18px;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.3s;
+        }
+        .submit-btn:hover {
+            background: #1e4436;
+        }
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .success-message {
+            display: none;
+            background: #d4edda;
+            color: #155724;
+            padding: 20px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .error-message {
+            display: none;
+            background: #f8d7da;
+            color: #721c24;
+            padding: 20px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="questionnaire-container">
+        <div class="questionnaire-header">
+            <h1>Wellness Questionnaire</h1>
+            <p>Thank you for booking your session! Please complete this questionnaire so Lorraine can personalize your Reiki experience.</p>
+        </div>
+
+        <div class="success-message" id="successMessage">
+            <h3>Thank you!</h3>
+            <p>Your questionnaire has been submitted successfully. Lorraine will review your responses and reach out to you personally before your first session.</p>
+        </div>
+
+        <div class="error-message" id="errorMessage">
+            <p>There was an error submitting your questionnaire. Please try again or contact us directly at <a href="tel:07846633248">07846 633248</a>.</p>
+        </div>
+
+        <form id="questionnaireForm">
+            <div class="form-group">
+                <label for="fullName">Full Name *</label>
+                <input type="text" id="fullName" name="fullName" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email Address *</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Phone Number *</label>
+                <input type="tel" id="phone" name="phone" required>
+            </div>
+
+            <div class="form-group">
+                <label for="program">Program/Session Booked *</label>
+                <select id="program" name="program" required>
+                    <option value="">Please select...</option>
+                    <option value="wellness">Path to Wellness - 4-Week Program</option>
+                    <option value="weightloss">Weight Loss & Wellbeing - 4-Week Program</option>
+                    <option value="menopause">Pathway Through Menopause - 4-Week Program</option>
+                    <option value="experience">Experience Reiki - Single Session</option>
+                    <option value="solo">Solo Follow-Up Session</option>
+                    <option value="reiki1">Reiki Level One Consultation</option>
+                    <option value="reiki2">Reiki Level Two Consultation</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="experience">Have you experienced Reiki before? *</label>
+                <select id="experience" name="experience" required>
+                    <option value="">Please select...</option>
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="goals">What are your wellness goals? *</label>
+                <textarea id="goals" name="goals" rows="4" required placeholder="What do you hope to achieve from your Reiki sessions?"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="health">Are there any health conditions we should be aware of?</label>
+                <textarea id="health" name="health" rows="3" placeholder="This information helps us provide the best possible care"></textarea>
+                <small>This information is confidential and helps Lorraine personalize your sessions</small>
+            </div>
+
+            <div class="form-group">
+                <label for="concerns">Do you have any specific concerns or questions for Lorraine?</label>
+                <textarea id="concerns" name="concerns" rows="3" placeholder="Any questions or concerns you'd like to discuss?"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="preferences">Preferred communication method</label>
+                <select id="preferences" name="preferences">
+                    <option value="">Please select...</option>
+                    <option value="phone">Phone call</option>
+                    <option value="email">Email</option>
+                    <option value="text">Text message</option>
+                    <option value="whatsapp">WhatsApp</option>
+                </select>
+            </div>
+
+            <div class="form-group checkbox">
+                <input type="checkbox" id="consent" name="consent" required>
+                <label for="consent">I understand that Reiki is complementary to medical treatment and does not replace professional medical advice. I confirm that all information provided is accurate. *</label>
+            </div>
+
+            <button type="submit" class="submit-btn" id="submitBtn">Submit Questionnaire</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('questionnaireForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const submitBtn = document.getElementById('submitBtn');
+            const successMessage = document.getElementById('successMessage');
+            const errorMessage = document.getElementById('errorMessage');
+
+            // Disable submit button
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+
+            // Get form data
+            const formData = {
+                fullName: document.getElementById('fullName').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                program: document.getElementById('program').value,
+                experience: document.getElementById('experience').value,
+                goals: document.getElementById('goals').value,
+                health: document.getElementById('health').value,
+                concerns: document.getElementById('concerns').value,
+                preferences: document.getElementById('preferences').value,
+                submittedDate: new Date().toLocaleString('en-GB')
+            };
+
+            // Send email using EmailJS
+            emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', formData)
+                .then(function(response) {
+                    console.log('SUCCESS!', response.status, response.text);
+
+                    // Show success message
+                    successMessage.style.display = 'block';
+                    errorMessage.style.display = 'none';
+
+                    // Hide form
+                    document.getElementById('questionnaireForm').style.display = 'none';
+
+                    // Scroll to top
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+                }, function(error) {
+                    console.log('FAILED...', error);
+
+                    // Show error message
+                    errorMessage.style.display = 'block';
+                    successMessage.style.display = 'none';
+
+                    // Re-enable submit button
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Submit Questionnaire';
+
+                    // Scroll to error
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+        });
+    </script>
+</body>
+</html>

@@ -25,142 +25,19 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // ========================================
-    // MODAL / QUESTIONNAIRE HANDLING
-    // ========================================
-    const modal = document.getElementById('questionnaireModal');
-    const closeBtn = document.querySelector('.close');
-    const bookButtons = document.querySelectorAll('[data-program]');
-    const questionnaireForm = document.getElementById('questionnaireForm');
-    const selectedProgramInput = document.getElementById('selectedProgram');
-
-    // Open modal when clicking any "Book" button
-    bookButtons.forEach(button => {
-        button.addEventListener('click', function(e) {
-            e.preventDefault();
-            const program = this.getAttribute('data-program');
-            selectedProgramInput.value = program;
-            modal.style.display = 'block';
-            document.body.style.overflow = 'hidden'; // Prevent background scrolling
-        });
-    });
-
-    // Close modal when clicking X
-    if (closeBtn) {
-        closeBtn.addEventListener('click', function() {
-            modal.style.display = 'none';
-            document.body.style.overflow = 'auto';
-        });
-    }
-
-    // Close modal when clicking outside
-    window.addEventListener('click', function(e) {
-        if (e.target === modal) {
-            modal.style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }
-    });
-
-    // ========================================
-    // FORM SUBMISSION
-    // ========================================
-    if (questionnaireForm) {
-        questionnaireForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            // Get form data
-            const formData = new FormData(questionnaireForm);
-            const data = {};
-            formData.forEach((value, key) => {
-                data[key] = value;
-            });
-
-            console.log('Questionnaire Data:', data);
-
-            // Here you would normally send this data to your backend
-            // For now, we'll store it in localStorage and proceed to booking
-            localStorage.setItem('questionnaireData', JSON.stringify(data));
-
-            // Show success message
-            alert('Thank you! Your questionnaire has been submitted. You will now be redirected to book your sessions.');
-
-            // Close modal
-            modal.style.display = 'none';
-            document.body.style.overflow = 'auto';
-
-            // Reset form
-            questionnaireForm.reset();
-
-            // Scroll to booking calendar
-            document.getElementById('calendly-embed').scrollIntoView({ behavior: 'smooth' });
-
-            // TODO: Integrate with your email service or backend
-            // sendQuestionnaireEmail(data);
-        });
-    }
-
-    // ========================================
-    // CALENDLY INTEGRATION
+    // KOALENDAR POPUP INTEGRATION
     // ========================================
 
-    /*
-    SETUP INSTRUCTIONS FOR CALENDLY:
+    // Load Koalendar popup script
+    const koalendarScript = document.createElement('script');
+    koalendarScript.src = 'https://koalendar.com/assets/js/iframe.js';
+    koalendarScript.async = true;
+    document.head.appendChild(koalendarScript);
 
-    1. Create a free Calendly account at https://calendly.com
+    // All booking buttons with class 'koalendar-button' will automatically
+    // open Koalendar popup when clicked (no additional JS needed)
+    // The Koalendar script handles this automatically based on the href URL
 
-    2. Set up your event types for each program:
-       - Reiki 4-Week Wellness Program
-       - Reiki for Weight Loss (4 weeks)
-       - Reiki for Menopause Support (4 weeks)
-       - Reiki Level One Consultation
-       - Reiki Level Two Consultation
-
-    3. Get your Calendly embed code:
-       - Go to your Calendly event page
-       - Click "Share" or "Copy link"
-       - Choose "Embed" option
-       - Copy the embed code
-
-    4. Replace the code below with your Calendly embed script
-
-    5. For multiple programs, you can use Calendly routing forms or
-       create separate event links and dynamically load them based on
-       which program button was clicked.
-
-    EXAMPLE CALENDLY EMBED CODE:
-    */
-
-    function loadCalendly() {
-        const calendlyDiv = document.getElementById('calendly-embed');
-
-        // STEP 1: Add Calendly widget script to page
-        const script = document.createElement('script');
-        script.src = 'https://assets.calendly.com/assets/external/widget.js';
-        script.async = true;
-        document.body.appendChild(script);
-
-        // STEP 2: Replace YOUR_CALENDLY_URL with your actual Calendly link
-        // Example: https://calendly.com/your-name/reiki-wellness
-
-        script.onload = function() {
-            // Clear the placeholder content
-            calendlyDiv.innerHTML = '';
-
-            // Initialize Calendly widget
-            // UNCOMMENT AND CUSTOMIZE THIS when you have your Calendly link:
-
-            /*
-            Calendly.initInlineWidget({
-                url: 'https://calendly.com/YOUR_USERNAME/YOUR_EVENT',
-                parentElement: calendlyDiv,
-                prefill: {},
-                utm: {}
-            });
-            */
-        };
-    }
-
-    // Uncomment this line when you're ready to activate Calendly:
-    // loadCalendly();
 
     // ========================================
     // VIDEO HANDLING
