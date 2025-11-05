@@ -25,18 +25,11 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // ========================================
-    // KOALENDAR POPUP INTEGRATION
+    // BOOKING SYSTEM
     // ========================================
 
-    // Load Koalendar popup script
-    const koalendarScript = document.createElement('script');
-    koalendarScript.src = 'https://koalendar.com/assets/js/iframe.js';
-    koalendarScript.async = true;
-    document.head.appendChild(koalendarScript);
-
-    // All booking buttons with class 'koalendar-button' will automatically
-    // open Koalendar popup when clicked (no additional JS needed)
-    // The Koalendar script handles this automatically based on the href URL
+    // Booking is handled via booking.html form
+    // No additional JavaScript needed - buttons link directly to booking page
 
 
     // ========================================

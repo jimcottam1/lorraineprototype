@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Confirmation - Reiki Your Path to Wellness</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        .confirmation-container {
+            max-width: 700px;
+            margin: 100px auto 50px;
+            padding: 40px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, #2c5f4f, #8FB2A5);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            color: white;
+        }
+        .confirmation-container h1 {
+            color: #2c5f4f;
+            margin-bottom: 20px;
+        }
+        .booking-details {
+            background: #f0f8f5;
+            padding: 25px;
+            border-radius: 8px;
+            margin: 30px 0;
+            text-align: left;
+        }
+        .booking-details h2 {
+            color: #2c5f4f;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+        }
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #ddd;
+        }
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+        .detail-label {
+            font-weight: 600;
+            color: #333;
+        }
+        .detail-value {
+            color: #666;
+            text-align: right;
+        }
+        .next-steps {
+            background: #fff9f0;
+            border-left: 4px solid #D4A056;
+            padding: 20px;
+            margin: 30px 0;
+            text-align: left;
+        }
+        .next-steps h3 {
+            color: #D4A056;
+            margin-bottom: 15px;
+        }
+        .next-steps ol {
+            padding-left: 20px;
+        }
+        .next-steps li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        .payment-button {
+            display: inline-block;
+            background: #2c5f4f;
+            color: white;
+            padding: 18px 50px;
+            border: none;
+            border-radius: 4px;
+            font-size: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.3s;
+            margin: 20px 0;
+        }
+        .payment-button:hover {
+            background: #1e4436;
+            color: white;
+        }
+        .free-consultation {
+            background: #d4edda;
+            color: #155724;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .contact-info {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid #eee;
+        }
+        .contact-info p {
+            color: #666;
+            margin-bottom: 10px;
+        }
+        .contact-info a {
+            color: #2c5f4f;
+            font-weight: 600;
+        }
+        .price-highlight {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #2c5f4f;
+        }
+    </style>
+</head>
+<body>
+    <div class="confirmation-container">
+        <div class="success-icon">✓</div>
+
+        <h1>Thank You for Your Booking Request!</h1>
+
+        <p>Hi <strong id="clientName"></strong>,</p>
+        <p>Your booking request has been received successfully.</p>
+
+        <div class="booking-details">
+            <h2>Booking Details</h2>
+            <div class="detail-row">
+                <span class="detail-label">Program:</span>
+                <span class="detail-value" id="programName"></span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Email:</span>
+                <span class="detail-value" id="clientEmail"></span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Phone:</span>
+                <span class="detail-value" id="clientPhone"></span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Preferred Days:</span>
+                <span class="detail-value" id="preferredDays"></span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Preferred Times:</span>
+                <span class="detail-value" id="preferredTimes"></span>
+            </div>
+        </div>
+
+        <!-- Payment section (shown for paid programs) -->
+        <div id="paymentSection" style="display: none;">
+            <div class="next-steps">
+                <h3>💳 Next Step: Complete Your Payment</h3>
+                <p>To secure your booking, please complete payment now:</p>
+                <p class="price-highlight">£<span id="programPrice"></span></p>
+            </div>
+
+            <a href="#" id="paymentLink" class="payment-button" target="_blank">
+                Pay £<span id="buttonPrice"></span> Now
+            </a>
+
+            <div class="next-steps">
+                <h3>After Payment, You'll Receive:</h3>
+                <ol>
+                    <li>✅ Payment confirmation from Stripe (check your email)</li>
+                    <li>✅ A link to complete your wellness questionnaire</li>
+                    <li>✅ Personal confirmation from Lorraine within 24 hours with your scheduled time</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Free consultation section -->
+        <div id="freeConsultation" style="display: none;">
+            <div class="free-consultation">
+                <h3>✅ Free Consultation Booked!</h3>
+                <p>No payment required. Lorraine will contact you within 24 hours to schedule your free consultation call.</p>
+            </div>
+
+            <div class="next-steps">
+                <h3>What Happens Next:</h3>
+                <ol>
+                    <li>Lorraine will review your booking request</li>
+                    <li>She'll reach out within 24 hours to schedule your consultation</li>
+                    <li>You'll discuss the Reiki attunement course and any questions you have</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Questionnaire link -->
+        <div class="next-steps" id="questionnaireSection" style="display: none;">
+            <h3>📝 Complete Your Wellness Questionnaire</h3>
+            <p>Help Lorraine personalize your session by completing the questionnaire:</p>
+            <a href="questionnaire.html" class="payment-button" style="background: #8FB2A5; margin-top: 10px;">
+                Complete Questionnaire
+            </a>
+            <p style="margin-top: 15px;"><small>You can also access this link from your payment confirmation email</small></p>
+        </div>
+
+        <div class="contact-info">
+            <p><strong>Questions?</strong></p>
+            <p>Contact Lorraine at <a href="tel:07846633248">07846 633248</a></p>
+            <p>or email <a href="mailto:lorraine@happinessinharmony.co.uk">lorraine@happinessinharmony.co.uk</a></p>
+            <p style="margin-top: 20px;">
+                <a href="index.html">← Return to Homepage</a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Stripe Payment Links - Replace these with your actual Stripe payment link URLs
+        const PAYMENT_LINKS = {
+            'experience': 'https://buy.stripe.com/test/YOUR-EXPERIENCE-LINK',  // £64
+            'solo': 'https://buy.stripe.com/test/YOUR-SOLO-LINK',              // £70
+            'wellness': 'https://buy.stripe.com/test/YOUR-WELLNESS-LINK',      // £256
+            'weightloss': 'https://buy.stripe.com/test/YOUR-WEIGHTLOSS-LINK',  // £256
+            'menopause': 'https://buy.stripe.com/test/YOUR-MENOPAUSE-LINK',    // £256
+            'reiki1': null,  // Free consultation
+            'reiki2': null   // Free consultation
+        };
+
+        // Load booking data from sessionStorage
+        const bookingData = JSON.parse(sessionStorage.getItem('bookingData'));
+
+        if (bookingData) {
+            // Populate confirmation details
+            document.getElementById('clientName').textContent = bookingData.fullName;
+            document.getElementById('programName').textContent = bookingData.program;
+            document.getElementById('clientEmail').textContent = bookingData.email;
+            document.getElementById('clientPhone').textContent = bookingData.phone;
+            document.getElementById('preferredDays').textContent = bookingData.preferredDays;
+            document.getElementById('preferredTimes').textContent = bookingData.preferredTimes;
+
+            const programCode = bookingData.programCode;
+            const price = bookingData.price;
+
+            // Show appropriate section based on program type
+            if (price === '0') {
+                // Free consultation
+                document.getElementById('freeConsultation').style.display = 'block';
+            } else {
+                // Paid program
+                document.getElementById('paymentSection').style.display = 'block';
+                document.getElementById('programPrice').textContent = price;
+                document.getElementById('buttonPrice').textContent = price;
+
+                // Set payment link
+                const paymentLink = PAYMENT_LINKS[programCode];
+                if (paymentLink) {
+                    document.getElementById('paymentLink').href = paymentLink;
+                } else {
+                    // If payment link not set up yet, show message
+                    document.getElementById('paymentLink').href = '#';
+                    document.getElementById('paymentLink').addEventListener('click', function(e) {
+                        e.preventDefault();
+                        alert('Payment link is being set up. Lorraine will send you the payment link directly via email within a few hours.');
+                    });
+                }
+
+                // Show questionnaire section for paid programs
+                document.getElementById('questionnaireSection').style.display = 'block';
+            }
+
+            // Clear sessionStorage
+            sessionStorage.removeItem('bookingData');
+        } else {
+            // No booking data found - redirect to booking page
+            window.location.href = 'booking.html';
+        }
+    </script>
+</body>
+</html>

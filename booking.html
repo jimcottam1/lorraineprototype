@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Your Session - Reiki Your Path to Wellness</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+    <!-- EmailJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function(){
+            // Initialize EmailJS with your public key
+            emailjs.init('YOUR_EMAILJS_PUBLIC_KEY'); // Replace with your actual public key
+        })();
+    </script>
+    <style>
+        .booking-form-page {
+            max-width: 700px;
+            margin: 100px auto 50px;
+            padding: 40px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .booking-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .booking-header h1 {
+            color: #2c5f4f;
+            margin-bottom: 10px;
+        }
+        .booking-header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+        .form-group {
+            margin-bottom: 25px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        .form-group label .required {
+            color: #d32f2f;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            font-family: 'Lato', sans-serif;
+        }
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        .form-group small {
+            display: block;
+            margin-top: 5px;
+            color: #666;
+            font-size: 14px;
+        }
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+        }
+        .checkbox-item input[type="checkbox"] {
+            width: auto;
+            margin-right: 8px;
+        }
+        .checkbox-item label {
+            margin-bottom: 0;
+            font-weight: 400;
+        }
+        .program-price {
+            display: inline-block;
+            background: #f0f8f5;
+            color: #2c5f4f;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-top: 10px;
+            font-size: 1.1rem;
+        }
+        .submit-btn {
+            background: #2c5f4f;
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 4px;
+            font-size: 18px;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.3s;
+        }
+        .submit-btn:hover {
+            background: #1e4436;
+        }
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #2c5f4f;
+            text-decoration: none;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        #programPrice {
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="booking-form-page">
+        <a href="index.html" class="back-link">← Back to Home</a>
+
+        <div class="booking-header">
+            <h1>Book Your Session</h1>
+            <p>Complete this form and we'll send you a secure payment link</p>
+        </div>
+
+        <form id="bookingForm">
+            <!-- Program Selection -->
+            <div class="form-group">
+                <label for="program">Select Program/Session <span class="required">*</span></label>
+                <select id="program" name="program" required>
+                    <option value="">Please select...</option>
+                    <option value="experience" data-price="64">Experience Reiki - Single Session (£64)</option>
+                    <option value="solo" data-price="70">Solo Follow-Up Session (£70)</option>
+                    <option value="wellness" data-price="256">Path to Wellness - 4-Week Program (£256)</option>
+                    <option value="weightloss" data-price="256">Weight Loss & Wellbeing - 4-Week Program (£256)</option>
+                    <option value="menopause" data-price="256">Pathway Through Menopause - 4-Week Program (£256)</option>
+                    <option value="reiki1" data-price="0">Reiki Level One - Consultation (Free)</option>
+                    <option value="reiki2" data-price="0">Reiki Level Two - Consultation (Free)</option>
+                </select>
+                <div id="programPrice"></div>
+            </div>
+
+            <!-- Contact Information -->
+            <div class="form-group">
+                <label for="fullName">Full Name <span class="required">*</span></label>
+                <input type="text" id="fullName" name="fullName" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email Address <span class="required">*</span></label>
+                <input type="email" id="email" name="email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Phone Number <span class="required">*</span></label>
+                <input type="tel" id="phone" name="phone" placeholder="07700 900000" required>
+            </div>
+
+            <!-- Scheduling Preferences -->
+            <div class="form-group">
+                <label>Preferred Days <span class="required">*</span></label>
+                <small>Check all days that work for you</small>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="monday" name="days" value="Monday">
+                        <label for="monday">Monday</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="tuesday" name="days" value="Tuesday">
+                        <label for="tuesday">Tuesday</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="wednesday" name="days" value="Wednesday">
+                        <label for="wednesday">Wednesday</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="thursday" name="days" value="Thursday">
+                        <label for="thursday">Thursday</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="friday" name="days" value="Friday">
+                        <label for="friday">Friday</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="saturday" name="days" value="Saturday">
+                        <label for="saturday">Saturday</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="sunday" name="days" value="Sunday">
+                        <label for="sunday">Sunday</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Preferred Times <span class="required">*</span></label>
+                <small>Check all times that work for you</small>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="morning" name="times" value="Morning (9am-12pm)">
+                        <label for="morning">Morning (9am-12pm)</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="afternoon" name="times" value="Afternoon (12pm-5pm)">
+                        <label for="afternoon">Afternoon (12pm-5pm)</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="evening" name="times" value="Evening (5pm-8pm)">
+                        <label for="evening">Evening (5pm-8pm)</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="flexible" name="times" value="Flexible">
+                        <label for="flexible">Flexible</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Information -->
+            <div class="form-group">
+                <label for="notes">Additional Notes or Questions</label>
+                <textarea id="notes" name="notes" placeholder="Any specific dates you prefer? Any questions for Lorraine?"></textarea>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="submit-btn" id="submitBtn">Submit Booking Request</button>
+        </form>
+    </div>
+
+    <script>
+        // Pre-select program from URL parameter
+        window.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const programParam = urlParams.get('program');
+
+            if (programParam) {
+                const programSelect = document.getElementById('program');
+                programSelect.value = programParam;
+
+                // Trigger change event to show price
+                programSelect.dispatchEvent(new Event('change'));
+            }
+        });
+
+        // Program selection - show price
+        document.getElementById('program').addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            const price = selectedOption.getAttribute('data-price');
+            const priceDiv = document.getElementById('programPrice');
+
+            if (price && price !== '0') {
+                priceDiv.innerHTML = `<span class="program-price">Price: £${price}</span>`;
+            } else if (price === '0') {
+                priceDiv.innerHTML = `<span class="program-price">Free Consultation</span>`;
+            } else {
+                priceDiv.innerHTML = '';
+            }
+        });
+
+        // Form submission
+        document.getElementById('bookingForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Validate at least one day is selected
+            const daysChecked = document.querySelectorAll('input[name="days"]:checked');
+            if (daysChecked.length === 0) {
+                alert('Please select at least one preferred day.');
+                return;
+            }
+
+            // Validate at least one time is selected
+            const timesChecked = document.querySelectorAll('input[name="times"]:checked');
+            if (timesChecked.length === 0) {
+                alert('Please select at least one preferred time.');
+                return;
+            }
+
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+
+            // Get selected program info
+            const programSelect = document.getElementById('program');
+            const selectedOption = programSelect.options[programSelect.selectedIndex];
+            const programText = selectedOption.text;
+            const programValue = programSelect.value;
+            const programPrice = selectedOption.getAttribute('data-price');
+
+            // Collect checked days
+            const preferredDays = Array.from(daysChecked).map(cb => cb.value).join(', ');
+
+            // Collect checked times
+            const preferredTimes = Array.from(timesChecked).map(cb => cb.value).join(', ');
+
+            // Prepare email data
+            const bookingData = {
+                program: programText,
+                programCode: programValue,
+                price: programPrice,
+                fullName: document.getElementById('fullName').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                preferredDays: preferredDays,
+                preferredTimes: preferredTimes,
+                notes: document.getElementById('notes').value,
+                submittedDate: new Date().toLocaleString('en-GB')
+            };
+
+            // Send email via EmailJS
+            emailjs.send('YOUR_SERVICE_ID', 'YOUR_BOOKING_TEMPLATE_ID', bookingData)
+                .then(function(response) {
+                    console.log('SUCCESS!', response.status, response.text);
+
+                    // Store data in sessionStorage for confirmation page
+                    sessionStorage.setItem('bookingData', JSON.stringify(bookingData));
+
+                    // Redirect to confirmation page
+                    window.location.href = 'booking-confirmation.html';
+
+                }, function(error) {
+                    console.log('FAILED...', error);
+                    alert('Sorry, there was an error submitting your booking. Please try again or call 07846 633248.');
+
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Submit Booking Request';
+                });
+        });
+    </script>
+</body>
+</html>
