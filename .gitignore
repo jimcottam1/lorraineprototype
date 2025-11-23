@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+booking-backend/node_modules/
+
+# Environment variables
+.env
+booking-backend/.env
+
+# OS files
+.DS_Store
+Thumbs.db
+nul
+
+# Logs
+*.log
+npm-debug.log*
+
+# IDE
+.vscode/
+.idea/
+
+# Build files
+dist/
+build/

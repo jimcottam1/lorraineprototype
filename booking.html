@@ -97,6 +97,47 @@
             margin-top: 10px;
             font-size: 1.1rem;
         }
+        .slot-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+            margin-top: 10px;
+        }
+        .slot-card {
+            border: 2px solid #ddd;
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: white;
+        }
+        .slot-card:hover {
+            border-color: #2c5f4f;
+            background: #f0f8f5;
+        }
+        .slot-card.selected {
+            border-color: #2c5f4f;
+            background: #2c5f4f;
+            color: white;
+        }
+        .slot-card.selected .slot-date {
+            color: #e8f5e9;
+        }
+        .slot-date {
+            font-weight: 600;
+            color: #2c5f4f;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        .slot-time {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 3px;
+        }
+        .slot-duration {
+            font-size: 13px;
+            opacity: 0.8;
+        }
         .submit-btn {
             background: #2c5f4f;
             color: white;
@@ -173,61 +214,12 @@
 
             <!-- Scheduling Preferences -->
             <div class="form-group">
-                <label>Preferred Days <span class="required">*</span></label>
-                <small>Check all days that work for you</small>
-                <div class="checkbox-group">
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="monday" name="days" value="Monday">
-                        <label for="monday">Monday</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="tuesday" name="days" value="Tuesday">
-                        <label for="tuesday">Tuesday</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="wednesday" name="days" value="Wednesday">
-                        <label for="wednesday">Wednesday</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="thursday" name="days" value="Thursday">
-                        <label for="thursday">Thursday</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="friday" name="days" value="Friday">
-                        <label for="friday">Friday</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="saturday" name="days" value="Saturday">
-                        <label for="saturday">Saturday</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="sunday" name="days" value="Sunday">
-                        <label for="sunday">Sunday</label>
-                    </div>
+                <label>Select Available Time Slot <span class="required">*</span></label>
+                <small>Choose from Lorraine's available appointment times</small>
+                <div id="availableSlotsContainer" style="margin-top: 15px;">
+                    <p style="text-align: center; color: #999; padding: 20px;">Loading available slots...</p>
                 </div>
-            </div>
-
-            <div class="form-group">
-                <label>Preferred Times <span class="required">*</span></label>
-                <small>Check all times that work for you</small>
-                <div class="checkbox-group">
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="morning" name="times" value="Morning (9am-12pm)">
-                        <label for="morning">Morning (9am-12pm)</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="afternoon" name="times" value="Afternoon (12pm-5pm)">
-                        <label for="afternoon">Afternoon (12pm-5pm)</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="evening" name="times" value="Evening (5pm-8pm)">
-                        <label for="evening">Evening (5pm-8pm)</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="flexible" name="times" value="Flexible">
-                        <label for="flexible">Flexible</label>
-                    </div>
-                </div>
+                <input type="hidden" id="selectedSlotId" name="selectedSlotId" required>
             </div>
 
             <!-- Additional Information -->
@@ -242,8 +234,73 @@
     </div>
 
     <script>
+        let availableSlots = [];
+        let selectedSlot = null;
+
+        // API URL configuration
+        const API_URL = window.location.hostname === 'localhost'
+            ? 'http://localhost:3000/api'
+            : '/api';
+
+        // Load available slots
+        async function loadAvailableSlots() {
+            try {
+                const response = await fetch(`${API_URL}/slots/available`);
+                const data = await response.json();
+
+                if (data.success) {
+                    availableSlots = data.slots;
+                    displayAvailableSlots();
+                } else {
+                    document.getElementById('availableSlotsContainer').innerHTML =
+                        '<p style="color: #d32f2f;">Unable to load available slots. Please try again later.</p>';
+                }
+            } catch (error) {
+                console.error('Error loading slots:', error);
+                document.getElementById('availableSlotsContainer').innerHTML =
+                    '<p style="color: #d32f2f;">Unable to load available slots. Please contact Lorraine at 07846 633248.</p>';
+            }
+        }
+
+        // Display available slots
+        function displayAvailableSlots() {
+            const container = document.getElementById('availableSlotsContainer');
+
+            if (availableSlots.length === 0) {
+                container.innerHTML = '<p style="color: #999;">No available slots at the moment. Please contact Lorraine at 07846 633248 to schedule.</p>';
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="slot-grid">
+                    ${availableSlots.map(slot => `
+                        <div class="slot-card" onclick="selectSlot('${slot.id}')">
+                            <div class="slot-date">${slot.displayDate}</div>
+                            <div class="slot-time">${slot.displayTime}</div>
+                            <div class="slot-duration">${slot.duration} minutes</div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // Select a slot
+        function selectSlot(slotId) {
+            selectedSlot = slotId;
+            document.getElementById('selectedSlotId').value = slotId;
+
+            // Update visual selection
+            document.querySelectorAll('.slot-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            event.target.closest('.slot-card').classList.add('selected');
+        }
+
         // Pre-select program from URL parameter
         window.addEventListener('DOMContentLoaded', function() {
+            // Load available slots
+            loadAvailableSlots();
+
             const urlParams = new URLSearchParams(window.location.search);
             const programParam = urlParams.get('program');
 
@@ -275,17 +332,9 @@
         document.getElementById('bookingForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
-            // Validate at least one day is selected
-            const daysChecked = document.querySelectorAll('input[name="days"]:checked');
-            if (daysChecked.length === 0) {
-                alert('Please select at least one preferred day.');
-                return;
-            }
-
-            // Validate at least one time is selected
-            const timesChecked = document.querySelectorAll('input[name="times"]:checked');
-            if (timesChecked.length === 0) {
-                alert('Please select at least one preferred time.');
+            // Validate slot is selected
+            if (!selectedSlot) {
+                alert('Please select an available time slot.');
                 return;
             }
 
@@ -300,39 +349,49 @@
             const programValue = programSelect.value;
             const programPrice = selectedOption.getAttribute('data-price');
 
-            // Collect checked days
-            const preferredDays = Array.from(daysChecked).map(cb => cb.value).join(', ');
-
-            // Collect checked times
-            const preferredTimes = Array.from(timesChecked).map(cb => cb.value).join(', ');
-
-            // Prepare email data
+            // Prepare booking data for backend API
             const bookingData = {
-                program: programText,
-                programCode: programValue,
-                price: programPrice,
                 fullName: document.getElementById('fullName').value,
                 email: document.getElementById('email').value,
                 phone: document.getElementById('phone').value,
-                preferredDays: preferredDays,
-                preferredTimes: preferredTimes,
-                notes: document.getElementById('notes').value,
-                submittedDate: new Date().toLocaleString('en-GB')
+                program: programValue,
+                slotId: selectedSlot,
+                notes: document.getElementById('notes').value
             };
 
-            // Send email via EmailJS
-            emailjs.send('service_wc1i00c', 'YOUR_BOOKING_TEMPLATE_ID', bookingData)
-                .then(function(response) {
-                    console.log('SUCCESS!', response.status, response.text);
+            // Send booking to backend API
+            fetch(`${API_URL}/bookings`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(bookingData)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Booking created:', data);
 
-                    // Store data in sessionStorage for confirmation page
-                    sessionStorage.setItem('bookingData', JSON.stringify(bookingData));
+                    // Get selected slot info
+                    const slot = availableSlots.find(s => s.id === selectedSlot);
+
+                    // Store booking ID and data for confirmation page
+                    sessionStorage.setItem('bookingId', data.booking.id);
+                    sessionStorage.setItem('bookingData', JSON.stringify({
+                        program: programText,
+                        programCode: programValue,
+                        price: programPrice,
+                        fullName: bookingData.fullName,
+                        email: bookingData.email,
+                        phone: bookingData.phone,
+                        selectedSlot: slot ? `${slot.displayDate} at ${slot.displayTime}` : 'Selected',
+                        notes: bookingData.notes
+                    }));
 
                     // Redirect to confirmation page
                     window.location.href = 'booking-confirmation.html';
-
-                }, function(error) {
-                    console.log('FAILED...', error);
+                })
+                .catch(error => {
+                    console.error('Booking error:', error);
                     alert('Sorry, there was an error submitting your booking. Please try again or call 07846 633248.');
 
                     submitBtn.disabled = false;

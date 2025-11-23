@@ -149,13 +149,9 @@
                 <span class="detail-label">Phone:</span>
                 <span class="detail-value" id="clientPhone"></span>
             </div>
-            <div class="detail-row">
-                <span class="detail-label">Preferred Days:</span>
-                <span class="detail-value" id="preferredDays"></span>
-            </div>
-            <div class="detail-row">
-                <span class="detail-label">Preferred Times:</span>
-                <span class="detail-value" id="preferredTimes"></span>
+            <div class="detail-row" id="selectedSlotRow">
+                <span class="detail-label">Selected Appointment:</span>
+                <span class="detail-value" id="selectedSlotValue" style="color: #2c5f4f; font-weight: 600;"></span>
             </div>
         </div>
 
@@ -239,8 +235,13 @@
             document.getElementById('programName').textContent = bookingData.program;
             document.getElementById('clientEmail').textContent = bookingData.email;
             document.getElementById('clientPhone').textContent = bookingData.phone;
-            document.getElementById('preferredDays').textContent = bookingData.preferredDays;
-            document.getElementById('preferredTimes').textContent = bookingData.preferredTimes;
+
+            // Show selected slot if available
+            if (bookingData.selectedSlot) {
+                document.getElementById('selectedSlotValue').textContent = bookingData.selectedSlot;
+            } else {
+                document.getElementById('selectedSlotRow').style.display = 'none';
+            }
 
             const programCode = bookingData.programCode;
             const price = bookingData.price;
