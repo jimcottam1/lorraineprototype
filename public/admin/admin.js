@@ -389,13 +389,22 @@ function showTab(tabName) {
     });
     event.target.classList.add('active');
 
-    // Show/hide tabs
+    // Show/hide all tabs
     document.getElementById('bookingsTab').style.display = tabName === 'bookings' ? 'block' : 'none';
     document.getElementById('slotsTab').style.display = tabName === 'slots' ? 'block' : 'none';
+    document.getElementById('programsTab').style.display = tabName === 'programs' ? 'block' : 'none';
+    document.getElementById('testimonialsTab').style.display = tabName === 'testimonials' ? 'block' : 'none';
+    document.getElementById('settingsTab').style.display = tabName === 'settings' ? 'block' : 'none';
 
-    // Load slots when switching to slots tab
+    // Load data when switching to tabs
     if (tabName === 'slots') {
         loadSlots();
+    } else if (tabName === 'programs') {
+        loadPrograms();
+    } else if (tabName === 'testimonials') {
+        loadTestimonials();
+    } else if (tabName === 'settings') {
+        loadSettings();
     }
 }
 
@@ -627,3 +636,374 @@ async function deleteSlot(slotId) {
 
 // Initialize bulk times list on page load
 updateBulkTimesList();
+
+// ====================
+// CONTENT MANAGEMENT
+// ====================
+
+// ====================
+// PROGRAMS MANAGEMENT
+// ====================
+
+async function loadPrograms() {
+    try {
+        const response = await fetch(`${API_URL}/content/programs`);
+        const programs = await response.json();
+        displayPrograms(programs);
+    } catch (error) {
+        console.error('Error loading programs:', error);
+    }
+}
+
+function displayPrograms(programs) {
+    const container = document.getElementById('programsList');
+
+    if (programs.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: #999; padding: 40px;">No programs yet. Add one above!</p>';
+        return;
+    }
+
+    container.innerHTML = programs.map(program => `
+        <div style="background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 15px;">
+            <div style="display: flex; justify-content: space-between; align-items: start;">
+                <div style="flex: 1;">
+                    <h3 style="margin: 0 0 10px 0; color: #2c5f4f;">${program.name}</h3>
+                    <p style="margin: 0 0 10px 0; color: #666;">${program.description}</p>
+                    <div style="display: flex; gap: 15px; flex-wrap: wrap; font-size: 14px;">
+                        <span><strong>Type:</strong> ${program.type}</span>
+                        <span><strong>Price:</strong> ${program.price}</span>
+                        <span><strong>Duration:</strong> ${program.duration}</span>
+                        ${program.badge ? `<span class="status-badge status-confirmed">${program.badge}</span>` : ''}
+                        ${program.featured ? '<span class="status-badge status-paid">Featured</span>' : ''}
+                        <span class="status-badge ${program.active ? 'status-confirmed' : 'status-cancelled'}">${program.active ? 'Active' : 'Inactive'}</span>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn-small" onclick="editProgram('${program.id}')">Edit</button>
+                    <button class="btn-small" style="background: #d32f2f;" onclick="deleteProgram('${program.id}')">Delete</button>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function showProgramForm() {
+    document.getElementById('programForm').classList.remove('hidden');
+    document.getElementById('programFormTitle').textContent = 'Add New Program';
+    document.getElementById('programEditForm').reset();
+    document.getElementById('programId').value = '';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function cancelProgramForm() {
+    document.getElementById('programForm').classList.add('hidden');
+    document.getElementById('programEditForm').reset();
+}
+
+async function editProgram(programId) {
+    try {
+        const response = await fetch(`${API_URL}/content/programs/${programId}`);
+        const program = await response.json();
+
+        document.getElementById('programId').value = program.id;
+        document.getElementById('programIdInput').value = program.id;
+        document.getElementById('programType').value = program.type;
+        document.getElementById('programName').value = program.name;
+        document.getElementById('programDescription').value = program.description;
+        document.getElementById('programDuration').value = program.duration;
+        document.getElementById('programPrice').value = program.price;
+        document.getElementById('programCaseStudyPrice').value = program.caseStudyPrice || '';
+        document.getElementById('programFeatures').value = program.features.join('\n');
+        document.getElementById('programBadge').value = program.badge || '';
+        document.getElementById('programFeatured').checked = program.featured;
+        document.getElementById('programActive').checked = program.active;
+        document.getElementById('programOrder').value = program.order;
+
+        document.getElementById('programFormTitle').textContent = 'Edit Program';
+        document.getElementById('programForm').classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (error) {
+        console.error('Error loading program:', error);
+        alert('Failed to load program');
+    }
+}
+
+document.getElementById('programEditForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const isEdit = !!document.getElementById('programId').value;
+    const programId = document.getElementById('programIdInput').value;
+
+    const programData = {
+        id: programId,
+        type: document.getElementById('programType').value,
+        name: document.getElementById('programName').value,
+        description: document.getElementById('programDescription').value,
+        duration: document.getElementById('programDuration').value,
+        price: document.getElementById('programPrice').value,
+        caseStudyPrice: document.getElementById('programCaseStudyPrice').value || null,
+        features: document.getElementById('programFeatures').value.split('\n').filter(f => f.trim()),
+        badge: document.getElementById('programBadge').value || null,
+        featured: document.getElementById('programFeatured').checked,
+        active: document.getElementById('programActive').checked,
+        order: parseInt(document.getElementById('programOrder').value)
+    };
+
+    try {
+        const response = await fetch(`${API_URL}/content/programs${isEdit ? '/' + programId : ''}`, {
+            method: isEdit ? 'PUT' : 'POST',
+            headers: {
+                'Authorization': `Bearer ${authToken}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(programData)
+        });
+
+        if (response.ok) {
+            alert(isEdit ? 'Program updated successfully!' : 'Program created successfully!');
+            cancelProgramForm();
+            loadPrograms();
+        } else {
+            const error = await response.json();
+            alert(error.error || 'Failed to save program');
+        }
+    } catch (error) {
+        console.error('Error saving program:', error);
+        alert('Failed to save program');
+    }
+});
+
+async function deleteProgram(programId) {
+    if (!confirm('Are you sure you want to delete this program?')) {
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_URL}/content/programs/${programId}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${authToken}`
+            }
+        });
+
+        if (response.ok) {
+            alert('Program deleted successfully');
+            loadPrograms();
+        } else {
+            alert('Failed to delete program');
+        }
+    } catch (error) {
+        console.error('Error deleting program:', error);
+        alert('Failed to delete program');
+    }
+}
+
+// ====================
+// TESTIMONIALS MANAGEMENT
+// ====================
+
+async function loadTestimonials() {
+    try {
+        const response = await fetch(`${API_URL}/content/testimonials`);
+        const testimonials = await response.json();
+        displayTestimonials(testimonials);
+    } catch (error) {
+        console.error('Error loading testimonials:', error);
+    }
+}
+
+function displayTestimonials(testimonials) {
+    const container = document.getElementById('testimonialsList');
+
+    if (testimonials.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: #999; padding: 40px;">No testimonials yet. Add one above!</p>';
+        return;
+    }
+
+    container.innerHTML = testimonials.map(testimonial => `
+        <div style="background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 15px;">
+            <div style="display: flex; justify-content: space-between; align-items: start;">
+                <div style="flex: 1;">
+                    <div style="font-size: 48px; color: #2c5f4f; line-height: 1; margin-bottom: 10px;">"</div>
+                    <p style="margin: 0 0 15px 0; font-style: italic; color: #333;">${testimonial.text}</p>
+                    <p style="margin: 0; color: #666; font-weight: 600;">— ${testimonial.author}${testimonial.year ? ', ' + testimonial.year : ''}</p>
+                    <p style="margin: 5px 0 0 0; color: #999; font-size: 14px;">${testimonial.program}</p>
+                    <span class="status-badge ${testimonial.active ? 'status-confirmed' : 'status-cancelled'}" style="margin-top: 10px; display: inline-block;">${testimonial.active ? 'Active' : 'Inactive'}</span>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn-small" onclick="editTestimonial('${testimonial._id}')">Edit</button>
+                    <button class="btn-small" style="background: #d32f2f;" onclick="deleteTestimonial('${testimonial._id}')">Delete</button>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function showTestimonialForm() {
+    document.getElementById('testimonialForm').classList.remove('hidden');
+    document.getElementById('testimonialFormTitle').textContent = 'Add New Testimonial';
+    document.getElementById('testimonialEditForm').reset();
+    document.getElementById('testimonialId').value = '';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function cancelTestimonialForm() {
+    document.getElementById('testimonialForm').classList.add('hidden');
+    document.getElementById('testimonialEditForm').reset();
+}
+
+async function editTestimonial(testimonialId) {
+    try {
+        const response = await fetch(`${API_URL}/content/testimonials/${testimonialId}`);
+        const testimonial = await response.json();
+
+        document.getElementById('testimonialId').value = testimonial._id;
+        document.getElementById('testimonialText').value = testimonial.text;
+        document.getElementById('testimonialAuthor').value = testimonial.author;
+        document.getElementById('testimonialProgram').value = testimonial.program;
+        document.getElementById('testimonialYear').value = testimonial.year || '';
+        document.getElementById('testimonialActive').checked = testimonial.active;
+        document.getElementById('testimonialOrder').value = testimonial.order;
+
+        document.getElementById('testimonialFormTitle').textContent = 'Edit Testimonial';
+        document.getElementById('testimonialForm').classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (error) {
+        console.error('Error loading testimonial:', error);
+        alert('Failed to load testimonial');
+    }
+}
+
+document.getElementById('testimonialEditForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const isEdit = !!document.getElementById('testimonialId').value;
+    const testimonialId = document.getElementById('testimonialId').value;
+
+    const testimonialData = {
+        text: document.getElementById('testimonialText').value,
+        author: document.getElementById('testimonialAuthor').value,
+        program: document.getElementById('testimonialProgram').value,
+        year: document.getElementById('testimonialYear').value || null,
+        active: document.getElementById('testimonialActive').checked,
+        order: parseInt(document.getElementById('testimonialOrder').value)
+    };
+
+    try {
+        const response = await fetch(`${API_URL}/content/testimonials${isEdit ? '/' + testimonialId : ''}`, {
+            method: isEdit ? 'PUT' : 'POST',
+            headers: {
+                'Authorization': `Bearer ${authToken}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(testimonialData)
+        });
+
+        if (response.ok) {
+            alert(isEdit ? 'Testimonial updated successfully!' : 'Testimonial created successfully!');
+            cancelTestimonialForm();
+            loadTestimonials();
+        } else {
+            const error = await response.json();
+            alert(error.error || 'Failed to save testimonial');
+        }
+    } catch (error) {
+        console.error('Error saving testimonial:', error);
+        alert('Failed to save testimonial');
+    }
+});
+
+async function deleteTestimonial(testimonialId) {
+    if (!confirm('Are you sure you want to delete this testimonial?')) {
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_URL}/content/testimonials/${testimonialId}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${authToken}`
+            }
+        });
+
+        if (response.ok) {
+            alert('Testimonial deleted successfully');
+            loadTestimonials();
+        } else {
+            alert('Failed to delete testimonial');
+        }
+    } catch (error) {
+        console.error('Error deleting testimonial:', error);
+        alert('Failed to delete testimonial');
+    }
+}
+
+// ====================
+// SITE SETTINGS MANAGEMENT
+// ====================
+
+async function loadSettings() {
+    try {
+        const response = await fetch(`${API_URL}/content/settings`);
+        const settings = await response.json();
+
+        document.getElementById('siteTitle').value = settings.siteTitle;
+        document.getElementById('tagline').value = settings.tagline;
+        document.getElementById('heroDescription').value = settings.heroDescription;
+        document.getElementById('phone').value = settings.phone;
+        document.getElementById('location').value = settings.location;
+        document.getElementById('businessName').value = settings.businessName;
+        document.getElementById('businessTagline').value = settings.businessTagline;
+        document.getElementById('practitionerName').value = settings.practitionerName;
+        document.getElementById('whatIsReiki').value = settings.whatIsReiki;
+        document.getElementById('reikiDisclaimer').value = settings.reikiDisclaimer;
+        document.getElementById('facebookUrl').value = settings.facebookUrl || '';
+        document.getElementById('instagramUrl').value = settings.instagramUrl || '';
+        document.getElementById('instagramHandle').value = settings.instagramHandle || '';
+        document.getElementById('mainWebsiteUrl').value = settings.mainWebsiteUrl || '';
+    } catch (error) {
+        console.error('Error loading settings:', error);
+    }
+}
+
+document.getElementById('settingsForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const settingsData = {
+        siteTitle: document.getElementById('siteTitle').value,
+        tagline: document.getElementById('tagline').value,
+        heroDescription: document.getElementById('heroDescription').value,
+        phone: document.getElementById('phone').value,
+        location: document.getElementById('location').value,
+        businessName: document.getElementById('businessName').value,
+        businessTagline: document.getElementById('businessTagline').value,
+        practitionerName: document.getElementById('practitionerName').value,
+        whatIsReiki: document.getElementById('whatIsReiki').value,
+        reikiDisclaimer: document.getElementById('reikiDisclaimer').value,
+        facebookUrl: document.getElementById('facebookUrl').value,
+        instagramUrl: document.getElementById('instagramUrl').value,
+        instagramHandle: document.getElementById('instagramHandle').value,
+        mainWebsiteUrl: document.getElementById('mainWebsiteUrl').value
+    };
+
+    try {
+        const response = await fetch(`${API_URL}/content/settings`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${authToken}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(settingsData)
+        });
+
+        if (response.ok) {
+            alert('Settings saved successfully!');
+        } else {
+            const error = await response.json();
+            alert(error.error || 'Failed to save settings');
+        }
+    } catch (error) {
+        console.error('Error saving settings:', error);
+        alert('Failed to save settings');
+    }
+});

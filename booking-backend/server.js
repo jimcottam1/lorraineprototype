@@ -29,10 +29,7 @@ app.use(express.static(path.join(__dirname, '../public')));
 // MongoDB Connection
 const connectDB = async () => {
   try {
-    await mongoose.connect(process.env.MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+    await mongoose.connect(process.env.MONGODB_URI);
     console.log('✅ MongoDB connected successfully');
   } catch (error) {
     console.error('❌ MongoDB connection error:', error.message);
@@ -47,11 +44,13 @@ const bookingRoutes = require('./routes/bookings');
 const adminRoutes = require('./routes/admin');
 const stripeRoutes = require('./routes/stripe');
 const slotRoutes = require('./routes/slots');
+const contentRoutes = require('./routes/content');
 
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/slots', slotRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/webhooks', stripeRoutes);
+app.use('/api/content', contentRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

@@ -405,9 +405,12 @@
             </div>
 
             <!-- Navigation Tabs -->
-            <div style="margin: 30px 0 20px; display: flex; gap: 10px; border-bottom: 2px solid #e0e0e0;">
+            <div style="margin: 30px 0 20px; display: flex; gap: 10px; border-bottom: 2px solid #e0e0e0; flex-wrap: wrap;">
                 <button class="tab-btn active" onclick="showTab('bookings')">📋 Bookings</button>
                 <button class="tab-btn" onclick="showTab('slots')">📅 Manage Slots</button>
+                <button class="tab-btn" onclick="showTab('programs')">🎯 Programs</button>
+                <button class="tab-btn" onclick="showTab('testimonials')">💬 Testimonials</button>
+                <button class="tab-btn" onclick="showTab('settings')">⚙️ Site Settings</button>
             </div>
 
             <!-- Bookings Tab -->
@@ -535,6 +538,194 @@
                 </div>
             </div>
             <!-- End Slots Tab -->
+
+            <!-- Programs Tab -->
+            <div id="programsTab" class="hidden">
+                <div style="margin-bottom: 20px;">
+                    <button class="btn-small" onclick="showProgramForm()">➕ Add New Program</button>
+                </div>
+                <div id="programsList"></div>
+                <div id="programForm" class="hidden" style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 20px;">
+                    <h2 id="programFormTitle">Add New Program</h2>
+                    <form id="programEditForm">
+                        <input type="hidden" id="programId">
+                        <div class="form-group">
+                            <label>Program ID (e.g., wellness, weightloss)</label>
+                            <input type="text" id="programIdInput" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Type</label>
+                            <select id="programType" required>
+                                <option value="4-week">4-Week Program</option>
+                                <option value="single-session">Single Session</option>
+                                <option value="course">Course</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Name</label>
+                            <input type="text" id="programName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea id="programDescription" rows="4" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Duration (e.g., "4-Week Program", "60-Minute Session")</label>
+                            <input type="text" id="programDuration" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Price (e.g., "£256")</label>
+                            <input type="text" id="programPrice" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Case Study Price (optional, e.g., "£80")</label>
+                            <input type="text" id="programCaseStudyPrice">
+                        </div>
+                        <div class="form-group">
+                            <label>Features (one per line)</label>
+                            <textarea id="programFeatures" rows="6"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Badge (optional, e.g., "Popular", "Try Reiki")</label>
+                            <input type="text" id="programBadge">
+                        </div>
+                        <div class="form-group">
+                            <label><input type="checkbox" id="programFeatured"> Featured Program</label>
+                        </div>
+                        <div class="form-group">
+                            <label><input type="checkbox" id="programActive" checked> Active (shown on website)</label>
+                        </div>
+                        <div class="form-group">
+                            <label>Display Order (lower numbers show first)</label>
+                            <input type="number" id="programOrder" value="0">
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <button type="submit" class="btn">Save Program</button>
+                            <button type="button" class="btn" style="background: #999;" onclick="cancelProgramForm()">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!-- End Programs Tab -->
+
+            <!-- Testimonials Tab -->
+            <div id="testimonialsTab" class="hidden">
+                <div style="margin-bottom: 20px;">
+                    <button class="btn-small" onclick="showTestimonialForm()">➕ Add New Testimonial</button>
+                </div>
+                <div id="testimonialsList"></div>
+                <div id="testimonialForm" class="hidden" style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 20px;">
+                    <h2 id="testimonialFormTitle">Add New Testimonial</h2>
+                    <form id="testimonialEditForm">
+                        <input type="hidden" id="testimonialId">
+                        <div class="form-group">
+                            <label>Testimonial Text</label>
+                            <textarea id="testimonialText" rows="4" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Author Name</label>
+                            <input type="text" id="testimonialAuthor" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Program</label>
+                            <input type="text" id="testimonialProgram" required placeholder="e.g., Path to Wellness Program">
+                        </div>
+                        <div class="form-group">
+                            <label>Year (optional)</label>
+                            <input type="text" id="testimonialYear" placeholder="e.g., 2025">
+                        </div>
+                        <div class="form-group">
+                            <label><input type="checkbox" id="testimonialActive" checked> Active (shown on website)</label>
+                        </div>
+                        <div class="form-group">
+                            <label>Display Order (lower numbers show first)</label>
+                            <input type="number" id="testimonialOrder" value="0">
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <button type="submit" class="btn">Save Testimonial</button>
+                            <button type="button" class="btn" style="background: #999;" onclick="cancelTestimonialForm()">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!-- End Testimonials Tab -->
+
+            <!-- Site Settings Tab -->
+            <div id="settingsTab" class="hidden">
+                <div style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <h2 style="margin-bottom: 20px;">Site Settings</h2>
+                    <form id="settingsForm">
+                        <h3 style="margin-top: 0; margin-bottom: 15px; color: #2c5f4f;">Site Information</h3>
+                        <div class="form-group">
+                            <label>Site Title</label>
+                            <input type="text" id="siteTitle" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Tagline</label>
+                            <input type="text" id="tagline" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Hero Description</label>
+                            <textarea id="heroDescription" rows="2" required></textarea>
+                        </div>
+
+                        <h3 style="margin-top: 30px; margin-bottom: 15px; color: #2c5f4f;">Contact Information</h3>
+                        <div class="form-group">
+                            <label>Phone Number</label>
+                            <input type="text" id="phone" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Location</label>
+                            <input type="text" id="location" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Business Name</label>
+                            <input type="text" id="businessName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Business Tagline</label>
+                            <input type="text" id="businessTagline" required>
+                        </div>
+
+                        <h3 style="margin-top: 30px; margin-bottom: 15px; color: #2c5f4f;">Practitioner Information</h3>
+                        <div class="form-group">
+                            <label>Practitioner Name</label>
+                            <input type="text" id="practitionerName" required>
+                        </div>
+
+                        <h3 style="margin-top: 30px; margin-bottom: 15px; color: #2c5f4f;">About Section</h3>
+                        <div class="form-group">
+                            <label>What is Reiki?</label>
+                            <textarea id="whatIsReiki" rows="4" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Reiki Disclaimer</label>
+                            <textarea id="reikiDisclaimer" rows="2" required></textarea>
+                        </div>
+
+                        <h3 style="margin-top: 30px; margin-bottom: 15px; color: #2c5f4f;">Social Media</h3>
+                        <div class="form-group">
+                            <label>Facebook URL</label>
+                            <input type="url" id="facebookUrl">
+                        </div>
+                        <div class="form-group">
+                            <label>Instagram URL</label>
+                            <input type="url" id="instagramUrl">
+                        </div>
+                        <div class="form-group">
+                            <label>Instagram Handle</label>
+                            <input type="text" id="instagramHandle" placeholder="@happinessinreiki">
+                        </div>
+                        <div class="form-group">
+                            <label>Main Website URL</label>
+                            <input type="url" id="mainWebsiteUrl">
+                        </div>
+
+                        <button type="submit" class="btn" style="margin-top: 20px;">Save Settings</button>
+                    </form>
+                </div>
+            </div>
+            <!-- End Site Settings Tab -->
         </div>
     </div>
 

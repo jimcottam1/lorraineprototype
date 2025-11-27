@@ -2,7 +2,15 @@
    REIKI WELLNESS PLATFORM - JAVASCRIPT
    ======================================== */
 
+// API Configuration
+const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? 'http://localhost:3000/api'
+    : 'https://lorraine-booking-backend.onrender.com/api';
+
 document.addEventListener('DOMContentLoaded', function() {
+    // Load dynamic content from CMS
+    loadSiteContent();
+
 
     // ========================================
     // MOBILE MENU TOGGLE
@@ -237,3 +245,199 @@ You can also use PayPal buttons. Visit:
 https://www.paypal.com/buttons/smart
 
 */
+
+// ========================================
+// DYNAMIC CONTENT LOADING FROM CMS
+// ========================================
+
+async function loadSiteContent() {
+    try {
+        // Load all content in parallel
+        const [settings, programs, testimonials] = await Promise.all([
+            fetch(`${API_URL}/content/settings`).then(r => r.json()),
+            fetch(`${API_URL}/content/programs?active=true`).then(r => r.json()),
+            fetch(`${API_URL}/content/testimonials?active=true`).then(r => r.json())
+        ]);
+
+        // Update site settings
+        if (settings) {
+            updateSiteSettings(settings);
+        }
+
+        // Update programs
+        if (programs && programs.length > 0) {
+            updatePrograms(programs);
+        }
+
+        // Update testimonials
+        if (testimonials && testimonials.length > 0) {
+            updateTestimonials(testimonials);
+        }
+
+    } catch (error) {
+        console.error('Error loading site content:', error);
+        // Fallback to static content if API fails
+    }
+}
+
+function updateSiteSettings(settings) {
+    // Update site title and navigation
+    document.title = settings.siteTitle;
+    document.querySelector('.nav-brand h1').textContent = settings.siteTitle;
+
+    // Update hero section
+    const heroContent = document.querySelector('.hero-content');
+    if (heroContent) {
+        heroContent.querySelector('h1').textContent = settings.tagline;
+        heroContent.querySelector('p').textContent = settings.heroDescription;
+    }
+
+    // Update practitioner info
+    const practitionerName = document.querySelector('.practitioner-info h4');
+    if (practitionerName) {
+        practitionerName.textContent = `Meet ${settings.practitionerName}`;
+    }
+
+    const businessInfo = document.querySelector('.practitioner-info p');
+    if (businessInfo) {
+        businessInfo.innerHTML = `<strong>${settings.businessName}</strong><br>${settings.businessTagline}`;
+    }
+
+    // Update contact info
+    const phoneLinks = document.querySelectorAll('a[href^="tel:"]');
+    phoneLinks.forEach(link => {
+        link.href = `tel:${settings.phone}`;
+        link.textContent = settings.phone;
+    });
+
+    const locationText = document.querySelectorAll('p');
+    locationText.forEach(p => {
+        if (p.innerHTML.includes('Based in')) {
+            p.innerHTML = `Based in ${settings.location}<br><a href="tel:${settings.phone}">${settings.phone}</a>`;
+        }
+    });
+
+    // Update about section
+    const whatIsReiki = document.querySelector('.about-text h3');
+    if (whatIsReiki && whatIsReiki.nextElementSibling) {
+        whatIsReiki.nextElementSibling.textContent = settings.whatIsReiki;
+    }
+
+    // Update social media links
+    const facebookLink = document.querySelector('a[href*="facebook"]');
+    if (facebookLink && settings.facebookUrl) {
+        facebookLink.href = settings.facebookUrl;
+    }
+
+    const instagramLink = document.querySelector('a[href*="instagram"]');
+    if (instagramLink && settings.instagramUrl) {
+        instagramLink.href = settings.instagramUrl;
+        if (settings.instagramHandle) {
+            instagramLink.textContent = `Instagram - ${settings.instagramHandle}`;
+        }
+    }
+
+    const mainWebsiteLink = document.querySelector('.external-link a');
+    if (mainWebsiteLink && settings.mainWebsiteUrl) {
+        mainWebsiteLink.href = settings.mainWebsiteUrl;
+    }
+
+    // Update footer
+    const footerTitle = document.querySelector('.footer-section h3');
+    if (footerTitle) {
+        footerTitle.textContent = settings.siteTitle;
+    }
+
+    const footerLocation = document.querySelectorAll('.footer-section p');
+    footerLocation.forEach(p => {
+        if (p.innerHTML.includes('Location:')) {
+            p.innerHTML = `<strong>Location:</strong> ${settings.location}`;
+        }
+        if (p.innerHTML.includes('Call')) {
+            p.innerHTML = `<strong>Call ${settings.practitionerName.split(' ')[0]}:</strong> <a href="tel:${settings.phone}">${settings.phone}</a>`;
+        }
+    });
+}
+
+function updatePrograms(programs) {
+    // Group programs by type
+    const fourWeekPrograms = programs.filter(p => p.type === '4-week').sort((a, b) => a.order - b.order);
+    const singleSessions = programs.filter(p => p.type === 'single-session').sort((a, b) => a.order - b.order);
+    const courses = programs.filter(p => p.type === 'course').sort((a, b) => a.order - b.order);
+
+    // Update 4-week programs
+    if (fourWeekPrograms.length > 0) {
+        const programsGrid = document.querySelector('.programs-grid');
+        if (programsGrid) {
+            programsGrid.innerHTML = fourWeekPrograms.map(program => `
+                <div class="program-card${program.featured ? ' featured' : ''}">
+                    ${program.badge ? `<div class="featured-badge">${program.badge}</div>` : ''}
+                    <div class="chakra-image-container">
+                        <img src="images/chakra-body.png" alt="Chakra Energy Centers" class="chakra-image">
+                        <p class="chakra-note">Add chakra image as: images/chakra-body.png</p>
+                    </div>
+                    <h3>${program.name}</h3>
+                    <div class="program-duration">${program.duration} | ${program.price}${program.caseStudyPrice ? ` (${program.caseStudyPrice} case study)` : ''}</div>
+                    <p>${program.description}</p>
+                    <ul class="program-features">
+                        ${program.features.map(feature => `<li>${feature}</li>`).join('')}
+                    </ul>
+                    <a href="booking.html?program=${program.id}" class="btn ${program.featured ? 'btn-primary' : 'btn-secondary'}">Book This Program - ${program.price}</a>
+                </div>
+            `).join('');
+        }
+    }
+
+    // Update single sessions
+    if (singleSessions.length > 0) {
+        const sessionsGrid = document.querySelector('.single-sessions-grid');
+        if (sessionsGrid) {
+            sessionsGrid.innerHTML = singleSessions.map(session => `
+                <div class="session-card">
+                    ${session.badge ? `<div class="session-badge">${session.badge}</div>` : ''}
+                    <h3>${session.name}</h3>
+                    <div class="session-duration">${session.duration} | ${session.price}</div>
+                    <p>${session.description}</p>
+                    <ul class="session-features">
+                        ${session.features.map(feature => `<li>${feature}</li>`).join('')}
+                    </ul>
+                    <a href="booking.html?program=${session.id}" class="btn btn-secondary">Book ${session.name} - ${session.price}</a>
+                </div>
+            `).join('');
+        }
+    }
+
+    // Update courses
+    if (courses.length > 0) {
+        const coursesGrid = document.querySelector('.courses-grid');
+        if (coursesGrid) {
+            coursesGrid.innerHTML = courses.map(course => `
+                <div class="course-card">
+                    <h3>${course.name}</h3>
+                    <p>${course.description}</p>
+                    <ul>
+                        ${course.features.map(feature => `<li>${feature}</li>`).join('')}
+                    </ul>
+                    <a href="booking.html?program=${course.id}" class="btn btn-secondary">Enquire About ${course.name.split(' ').pop()}</a>
+                </div>
+            `).join('');
+        }
+    }
+}
+
+function updateTestimonials(testimonials) {
+    const testimonialsGrid = document.querySelector('.testimonials-grid');
+    if (!testimonialsGrid) return;
+
+    // Sort by order
+    const sortedTestimonials = testimonials.sort((a, b) => a.order - b.order);
+
+    testimonialsGrid.innerHTML = sortedTestimonials.map(testimonial => `
+        <div class="testimonial-card">
+            <div class="quote-icon">"</div>
+            <p class="testimonial-text">${testimonial.text}</p>
+            <p class="testimonial-author">— ${testimonial.author}${testimonial.year ? ', ' + testimonial.year : ''}</p>
+            <p class="testimonial-program">${testimonial.program}</p>
+        </div>
+    `).join('');
+}
