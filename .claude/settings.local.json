@@ -16,7 +16,21 @@
       "Bash(npm install:*)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Bash(git reset:*)"
+      "Bash(git reset:*)",
+      "Bash(npm:*)",
+      "Bash(npx create-strapi-app@latest:*)",
+      "Bash(set STRAPI_DISABLE_UPDATE_NOTIFICATION=true:*)",
+      "Bash(npx:*)",
+      "Bash(timeout /t 3)",
+      "Bash(ping:*)",
+      "Bash(start index.html)",
+      "Bash(timeout /t)",
+      "Bash(start http://localhost:8080)",
+      "Bash(cmd /c \"taskkill /F /PID 9820\")",
+      "Bash(start http://localhost:3000/admin)",
+      "Bash(stripe --version:*)",
+      "Bash(powershell -Command:*)",
+      "Bash(cmd /c \"taskkill /F /PID 17172\")"
     ],
     "deny": [],
     "ask": []

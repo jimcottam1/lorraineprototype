@@ -80,17 +80,61 @@
         .btn-primary:hover {
             background: #234a3d;
         }
+        .loading {
+            text-align: center;
+            color: #666;
+            padding: 40px;
+        }
+
+        .booking-details {
+            background: #fff;
+            padding: 20px;
+            border-radius: 6px;
+            border: 1px solid #e0e0e0;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .booking-details p {
+            margin: 10px 0;
+            padding: 10px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .booking-details p:last-child {
+            border-bottom: none;
+        }
+
+        .booking-details strong {
+            color: #2c5f4f;
+            min-width: 150px;
+            display: inline-block;
+        }
     </style>
 </head>
 <body>
     <div class="success-container">
-        <div class="success-icon">✓</div>
-        <h1>Booking Confirmed!</h1>
-
-        <div class="message">
-            <p>Thank you for your booking! Your payment has been received successfully.</p>
-            <p>A confirmation email has been sent to your email address.</p>
+        <div id="loadingMessage" class="loading">
+            <p>Verifying your payment...</p>
         </div>
+
+        <div id="successContent" style="display: none;">
+            <div class="success-icon">✓</div>
+            <h1>Booking Confirmed!</h1>
+
+            <div class="message">
+                <p>Thank you for your booking! Your payment has been received successfully.</p>
+                <p>A confirmation email has been sent to <strong id="customerEmail"></strong></p>
+            </div>
+
+            <div class="booking-details">
+                <h3 style="color: #2c5f4f; margin-top: 0;">Booking Details</h3>
+                <p><strong>Name:</strong> <span id="customerName"></span></p>
+                <p><strong>Program:</strong> <span id="programName"></span></p>
+                <p><strong>Price Paid:</strong> <span id="pricePaid"></span></p>
+                <p><strong>Payment Status:</strong> <span id="paymentStatus" style="color: #4caf50; font-weight: 600;">PAID</span></p>
+                <p><strong>Booking Reference:</strong> <span id="bookingId"></span></p>
+            </div>
 
         <div class="next-steps">
             <h3>What Happens Next?</h3>
@@ -107,7 +151,76 @@
             <p>If you have any questions, please contact Lorraine directly.</p>
         </div>
 
-        <a href="index.html" class="btn-primary">Return to Homepage</a>
+            <a href="../index.html" class="btn-primary">Return to Homepage</a>
+        </div>
+
+        <div id="errorContent" style="display: none;">
+            <div class="success-icon" style="color: #f44336;">✗</div>
+            <h1>Unable to Verify Payment</h1>
+            <div class="message">
+                <p>We couldn't verify your payment at this time.</p>
+                <p>Please check your email for confirmation, or contact Lorraine if you have any concerns.</p>
+            </div>
+            <a href="../index.html" class="btn-primary">Return to Homepage</a>
+        </div>
     </div>
+
+    <script>
+        // API Configuration
+        const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+            ? 'http://localhost:3000/api'
+            : 'https://lorraine-booking-backend.onrender.com/api';
+
+        // Get URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const sessionId = urlParams.get('session_id');
+        const bookingId = urlParams.get('booking_id');
+
+        // Verify and display booking details
+        async function loadBookingDetails() {
+            if (!bookingId) {
+                showError();
+                return;
+            }
+
+            try {
+                // Fetch booking details from API
+                const response = await fetch(`${API_URL}/bookings/${bookingId}`);
+
+                if (!response.ok) {
+                    throw new Error('Booking not found');
+                }
+
+                const booking = await response.json();
+
+                // Display booking details
+                document.getElementById('customerName').textContent = booking.fullName;
+                document.getElementById('customerEmail').textContent = booking.email;
+                document.getElementById('programName').textContent = booking.program;
+                document.getElementById('pricePaid').textContent = `£${booking.price}`;
+                document.getElementById('bookingId').textContent = booking.id;
+
+                // Show success content
+                document.getElementById('loadingMessage').style.display = 'none';
+                document.getElementById('successContent').style.display = 'block';
+
+            } catch (error) {
+                console.error('Error loading booking:', error);
+                showError();
+            }
+        }
+
+        function showError() {
+            document.getElementById('loadingMessage').style.display = 'none';
+            document.getElementById('errorContent').style.display = 'block';
+        }
+
+        // Load details when page loads
+        if (bookingId) {
+            loadBookingDetails();
+        } else {
+            showError();
+        }
+    </script>
 </body>
 </html>

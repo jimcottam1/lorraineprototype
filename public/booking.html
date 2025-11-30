@@ -370,25 +370,35 @@
                 .then(response => response.json())
                 .then(data => {
                     console.log('Booking created:', data);
+                    console.log('Checkout URL:', data.checkoutUrl);
+                    console.log('Has checkout URL?', !!data.checkoutUrl);
 
-                    // Get selected slot info
-                    const slot = availableSlots.find(s => s.id === selectedSlot);
+                    // Check if we have a Stripe checkout URL
+                    if (data.checkoutUrl) {
+                        // Redirect to Stripe checkout for payment
+                        console.log('Redirecting to Stripe checkout:', data.checkoutUrl);
+                        window.location.href = data.checkoutUrl;
+                    } else {
+                        // No payment required, go to confirmation page
+                        // Get selected slot info
+                        const slot = availableSlots.find(s => s.id === selectedSlot);
 
-                    // Store booking ID and data for confirmation page
-                    sessionStorage.setItem('bookingId', data.booking.id);
-                    sessionStorage.setItem('bookingData', JSON.stringify({
-                        program: programText,
-                        programCode: programValue,
-                        price: programPrice,
-                        fullName: bookingData.fullName,
-                        email: bookingData.email,
-                        phone: bookingData.phone,
-                        selectedSlot: slot ? `${slot.displayDate} at ${slot.displayTime}` : 'Selected',
-                        notes: bookingData.notes
-                    }));
+                        // Store booking ID and data for confirmation page
+                        sessionStorage.setItem('bookingId', data.booking.id);
+                        sessionStorage.setItem('bookingData', JSON.stringify({
+                            program: programText,
+                            programCode: programValue,
+                            price: programPrice,
+                            fullName: bookingData.fullName,
+                            email: bookingData.email,
+                            phone: bookingData.phone,
+                            selectedSlot: slot ? `${slot.displayDate} at ${slot.displayTime}` : 'Selected',
+                            notes: bookingData.notes
+                        }));
 
-                    // Redirect to confirmation page
-                    window.location.href = 'booking-confirmation.html';
+                        // Redirect to confirmation page
+                        window.location.href = 'booking-confirmation.html';
+                    }
                 })
                 .catch(error => {
                     console.error('Booking error:', error);

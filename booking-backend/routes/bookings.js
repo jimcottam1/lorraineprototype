@@ -114,6 +114,7 @@ router.post('/', async (req, res) => {
     // If it's a paid program, create Stripe checkout session
     let checkoutUrl = null;
     if (price > 0) {
+      console.log(`💳 Creating Stripe checkout for £${price}...`);
       try {
         const session = await stripe.checkout.sessions.create({
           payment_method_types: ['card'],
@@ -145,13 +146,15 @@ router.post('/', async (req, res) => {
         await booking.save();
 
         checkoutUrl = session.url;
+        console.log(`✅ Stripe checkout created: ${checkoutUrl}`);
       } catch (stripeError) {
-        console.error('Stripe error:', stripeError);
+        console.error('❌ Stripe error:', stripeError.message);
+        console.error('Full error:', stripeError);
         // Don't fail the booking, just log the error
       }
     }
 
-    res.status(201).json({
+    const response = {
       success: true,
       booking: {
         id: booking._id,
@@ -163,7 +166,10 @@ router.post('/', async (req, res) => {
         paymentStatus: booking.paymentStatus
       },
       checkoutUrl: checkoutUrl
-    });
+    };
+
+    console.log('📤 Sending response with checkoutUrl:', !!checkoutUrl);
+    res.status(201).json(response);
 
   } catch (error) {
     console.error('Error creating booking:', error);
