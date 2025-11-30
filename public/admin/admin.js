@@ -380,6 +380,9 @@ window.onclick = function(event) {
 // ====================
 
 let bulkTimes = [];
+let currentMonth = new Date();
+let selectedDate = null;
+let allSlots = [];
 
 // Tab switching
 function showTab(tabName) {
@@ -554,56 +557,171 @@ async function loadSlots() {
         const data = await response.json();
 
         if (data.success) {
-            displaySlots(data.slots);
+            allSlots = data.slots;
+            renderCalendar();
         } else {
-            document.getElementById('slotsListContainer').innerHTML =
-                '<p style="text-align: center; color: #d32f2f;">Failed to load slots</p>';
+            document.getElementById('calendarDays').innerHTML =
+                '<p style="text-align: center; color: #d32f2f; grid-column: 1 / -1;">Failed to load slots</p>';
         }
     } catch (error) {
         console.error('Error loading slots:', error);
-        document.getElementById('slotsListContainer').innerHTML =
-            '<p style="text-align: center; color: #d32f2f;">Error loading slots</p>';
+        document.getElementById('calendarDays').innerHTML =
+            '<p style="text-align: center; color: #d32f2f; grid-column: 1 / -1;">Error loading slots</p>';
     }
 }
 
-// Display slots list
-function displaySlots(slots) {
-    const container = document.getElementById('slotsListContainer');
+// Calendar navigation
+function previousMonth() {
+    currentMonth.setMonth(currentMonth.getMonth() - 1);
+    renderCalendar();
+}
+
+function nextMonth() {
+    currentMonth.setMonth(currentMonth.getMonth() + 1);
+    renderCalendar();
+}
+
+function goToToday() {
+    currentMonth = new Date();
+    renderCalendar();
+}
+
+// Render calendar
+function renderCalendar() {
+    const year = currentMonth.getFullYear();
+    const month = currentMonth.getMonth();
+
+    // Update month/year display
+    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'];
+    document.getElementById('calendarMonthYear').textContent = `${monthNames[month]} ${year}`;
+
+    // Get first day of month and number of days
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const daysInMonth = lastDay.getDate();
+    const startingDayOfWeek = firstDay.getDay();
+
+    // Get previous month's last days
+    const prevMonthLastDay = new Date(year, month, 0);
+    const prevMonthDays = prevMonthLastDay.getDate();
+
+    // Group slots by date for quick lookup
+    const slotsByDate = {};
+    allSlots.forEach(slot => {
+        // Parse the date from slot
+        const slotDate = new Date(slot.date);
+        const dateKey = `${slotDate.getFullYear()}-${String(slotDate.getMonth() + 1).padStart(2, '0')}-${String(slotDate.getDate()).padStart(2, '0')}`;
+        if (!slotsByDate[dateKey]) {
+            slotsByDate[dateKey] = [];
+        }
+        slotsByDate[dateKey].push(slot);
+    });
+
+    const calendarDays = document.getElementById('calendarDays');
+    calendarDays.innerHTML = '';
+
+    // Add previous month's days
+    for (let i = startingDayOfWeek - 1; i >= 0; i--) {
+        const day = prevMonthDays - i;
+        const dayDiv = document.createElement('div');
+        dayDiv.className = 'calendar-day other-month';
+        dayDiv.innerHTML = `<div class="calendar-day-number">${day}</div>`;
+        calendarDays.appendChild(dayDiv);
+    }
+
+    // Add current month's days
+    for (let day = 1; day <= daysInMonth; day++) {
+        const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const daySlots = slotsByDate[dateKey] || [];
+        const hasSlots = daySlots.length > 0;
+
+        const dayDiv = document.createElement('div');
+        dayDiv.className = 'calendar-day';
+        if (hasSlots) {
+            dayDiv.classList.add('has-slots');
+        }
+
+        // Check if this is the selected date
+        if (selectedDate && selectedDate === dateKey) {
+            dayDiv.classList.add('selected');
+        }
+
+        dayDiv.innerHTML = `
+            <div class="calendar-day-number">${day}</div>
+            ${hasSlots ? `<div class="calendar-day-count">${daySlots.length} slot${daySlots.length !== 1 ? 's' : ''}</div>` : ''}
+        `;
+
+        dayDiv.onclick = () => selectDate(dateKey, daySlots);
+        calendarDays.appendChild(dayDiv);
+    }
+
+    // Add next month's days to fill the grid
+    const totalCells = calendarDays.children.length;
+    const remainingCells = 42 - totalCells; // 6 rows × 7 days
+    for (let day = 1; day <= remainingCells; day++) {
+        const dayDiv = document.createElement('div');
+        dayDiv.className = 'calendar-day other-month';
+        dayDiv.innerHTML = `<div class="calendar-day-number">${day}</div>`;
+        calendarDays.appendChild(dayDiv);
+    }
+
+    // If a date is selected, update the slots display
+    if (selectedDate) {
+        const daySlots = slotsByDate[selectedDate] || [];
+        displaySelectedDaySlots(selectedDate, daySlots);
+    }
+}
+
+// Select a date and show its slots
+function selectDate(dateKey, slots) {
+    selectedDate = dateKey;
+    renderCalendar(); // Re-render to update selected state
+    displaySelectedDaySlots(dateKey, slots);
+}
+
+// Display slots for selected day
+function displaySelectedDaySlots(dateKey, slots) {
+    const container = document.getElementById('selectedDaySlots');
 
     if (slots.length === 0) {
-        container.innerHTML = '<p style="text-align: center; color: #999; padding: 40px;">No slots created yet. Create some above!</p>';
+        container.innerHTML = `
+            <div class="selected-day-header">${formatDateKey(dateKey)}</div>
+            <p style="text-align: center; color: #999; padding: 20px;">No slots available for this day</p>
+        `;
         return;
     }
 
-    // Group slots by date
-    const groupedSlots = {};
-    slots.forEach(slot => {
-        if (!groupedSlots[slot.displayDate]) {
-            groupedSlots[slot.displayDate] = [];
-        }
-        groupedSlots[slot.displayDate].push(slot);
-    });
-
-    container.innerHTML = Object.keys(groupedSlots).map(date => `
-        <div style="margin-bottom: 20px;">
-            <h3 style="color: #2c5f4f; margin-bottom: 10px; font-size: 16px;">${date}</h3>
-            ${groupedSlots[date].map(slot => `
-                <div class="slot-item">
-                    <div>
-                        <strong>${slot.time}</strong>
-                        <span style="color: #666; margin-left: 10px;">(${slot.duration} mins)</span>
-                        ${!slot.isAvailable ? '<span style="margin-left: 10px; color: #d32f2f; font-size: 12px;">● BOOKED</span>' : ''}
-                        ${slot.booking ? `<span style="margin-left: 10px; color: #666; font-size: 12px;">- ${slot.booking.clientName}</span>` : ''}
-                    </div>
-                    <div>
-                        ${slot.isAvailable ? `
-                            <button class="btn-small" onclick="deleteSlot('${slot.id}')" style="background: #d32f2f; padding: 6px 12px;">Delete</button>
-                        ` : ''}
-                    </div>
+    container.innerHTML = `
+        <div class="selected-day-header">${formatDateKey(dateKey)} - ${slots.length} Slot${slots.length !== 1 ? 's' : ''}</div>
+        ${slots.map(slot => `
+            <div class="slot-item">
+                <div>
+                    <strong style="font-size: 18px;">${slot.time}</strong>
+                    <span style="color: #666; margin-left: 10px;">(${slot.duration} mins)</span>
+                    ${!slot.isAvailable ? '<span style="margin-left: 10px; color: #d32f2f; font-size: 12px;">● BOOKED</span>' : '<span style="margin-left: 10px; color: #2e7d32; font-size: 12px;">● AVAILABLE</span>'}
+                    ${slot.booking ? `<span style="margin-left: 10px; color: #666; font-size: 12px;">- ${slot.booking.clientName}</span>` : ''}
                 </div>
-            `).join('')}
-        </div>
-    `).join('');
+                <div>
+                    ${slot.isAvailable ? `
+                        <button class="btn-small" onclick="deleteSlot('${slot.id}')" style="background: #d32f2f; padding: 8px 16px;">Delete</button>
+                    ` : ''}
+                </div>
+            </div>
+        `).join('')}
+    `;
+}
+
+// Format date key for display
+function formatDateKey(dateKey) {
+    const [year, month, day] = dateKey.split('-');
+    const date = new Date(year, month - 1, day);
+    return date.toLocaleDateString('en-GB', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+    });
 }
 
 // Delete slot
@@ -624,7 +742,7 @@ async function deleteSlot(slotId) {
 
         if (data.success) {
             alert('Slot deleted successfully');
-            loadSlots();
+            await loadSlots(); // Reload calendar
         } else {
             alert(data.error || 'Failed to delete slot');
         }

@@ -410,6 +410,160 @@
             background: #fff3e0;
             color: #e65100;
         }
+
+        /* Calendar Styles */
+        .calendar-container {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 0 10px;
+        }
+
+        .calendar-header h3 {
+            font-size: 20px;
+            color: #2c5f4f;
+            margin: 0;
+        }
+
+        .calendar-nav {
+            display: flex;
+            gap: 10px;
+        }
+
+        .calendar-nav button {
+            background: #2c5f4f;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .calendar-nav button:hover {
+            background: #234a3d;
+        }
+
+        .calendar-weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .calendar-weekday {
+            text-align: center;
+            font-weight: 700;
+            color: #2c5f4f;
+            padding: 12px 0;
+            font-size: 14px;
+            text-transform: uppercase;
+        }
+
+        .calendar-days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: white;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .calendar-day:hover {
+            border-color: #2c5f4f;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .calendar-day.other-month {
+            opacity: 0.3;
+            cursor: default;
+        }
+
+        .calendar-day.other-month:hover {
+            border-color: #e0e0e0;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .calendar-day.has-slots {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            border-color: #4caf50;
+        }
+
+        .calendar-day.has-slots:hover {
+            background: linear-gradient(135deg, #c8e6c9 0%, #a5d6a7 100%);
+        }
+
+        .calendar-day.selected {
+            background: #2c5f4f;
+            border-color: #2c5f4f;
+            color: white;
+        }
+
+        .calendar-day.selected:hover {
+            background: #234a3d;
+        }
+
+        .calendar-day-number {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .calendar-day-count {
+            font-size: 11px;
+            font-weight: 600;
+            background: #2c5f4f;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        .calendar-day.selected .calendar-day-count {
+            background: white;
+            color: #2c5f4f;
+        }
+
+        .selected-day-slots {
+            margin-top: 30px;
+        }
+
+        .selected-day-header {
+            font-size: 20px;
+            color: #2c5f4f;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .no-day-selected {
+            text-align: center;
+            color: #999;
+            padding: 40px;
+            font-style: italic;
+        }
     </style>
 </head>
 <body>
@@ -581,11 +735,37 @@
                     </div>
                 </div>
 
-                <!-- Slots List -->
-                <div style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                    <h2 style="margin-bottom: 20px;">Available Slots</h2>
-                    <div id="slotsListContainer">
-                        <p style="text-align: center; color: #999; padding: 40px;">Loading slots...</p>
+                <!-- Slots Calendar View -->
+                <div class="calendar-container">
+                    <h2 style="margin-bottom: 20px;">Available Slots Calendar</h2>
+
+                    <div class="calendar-header">
+                        <h3 id="calendarMonthYear"></h3>
+                        <div class="calendar-nav">
+                            <button onclick="previousMonth()">← Previous</button>
+                            <button onclick="nextMonth()">Next →</button>
+                            <button onclick="goToToday()">Today</button>
+                        </div>
+                    </div>
+
+                    <div class="calendar-weekdays">
+                        <div class="calendar-weekday">Sun</div>
+                        <div class="calendar-weekday">Mon</div>
+                        <div class="calendar-weekday">Tue</div>
+                        <div class="calendar-weekday">Wed</div>
+                        <div class="calendar-weekday">Thu</div>
+                        <div class="calendar-weekday">Fri</div>
+                        <div class="calendar-weekday">Sat</div>
+                    </div>
+
+                    <div class="calendar-days" id="calendarDays">
+                        <!-- Calendar days will be generated here -->
+                    </div>
+
+                    <div class="selected-day-slots">
+                        <div id="selectedDaySlots">
+                            <div class="no-day-selected">Click on a day to view its available slots</div>
+                        </div>
                     </div>
                 </div>
             </div>

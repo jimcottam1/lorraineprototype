@@ -30,7 +30,9 @@
       "Bash(start http://localhost:3000/admin)",
       "Bash(stripe --version:*)",
       "Bash(powershell -Command:*)",
-      "Bash(cmd /c \"taskkill /F /PID 17172\")"
+      "Bash(cmd /c \"taskkill /F /PID 17172\")",
+      "Bash(timeout /t 5)",
+      "Bash(start http://localhost:3000/booking.html)"
     ],
     "deny": [],
     "ask": []

@@ -190,9 +190,93 @@ const sendBookingConfirmationToCustomer = async (booking, paymentUrl) => {
   }
 };
 
+const sendPaymentNotificationToAdmin = async (booking) => {
+  console.log('📧 Sending payment notification to admin...');
+
+  if (!resend) {
+    console.log('⚠️  Resend not configured. Admin notification not sent.');
+    return;
+  }
+
+  try {
+    const formattedDate = booking.paidAt ? new Date(booking.paidAt).toLocaleString('en-GB', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    }) : 'Just now';
+
+    await resend.emails.send({
+      from: process.env.RESEND_FROM_EMAIL || 'bookings@yourdomain.com',
+      to: process.env.ADMIN_EMAIL,
+      subject: `💰 Payment Received: ${booking.fullName} - £${booking.price}`,
+      html: `
+        <h2 style="color: #2c5f4f;">✅ Payment Received</h2>
+
+        <p style="font-size: 16px; color: #2e7d32; font-weight: bold;">
+          A customer has successfully completed their payment!
+        </p>
+
+        <h3>Client Details</h3>
+        <ul style="line-height: 1.8;">
+          <li><strong>Name:</strong> ${booking.fullName}</li>
+          <li><strong>Email:</strong> <a href="mailto:${booking.email}">${booking.email}</a></li>
+          <li><strong>Phone:</strong> <a href="tel:${booking.phone}">${booking.phone}</a></li>
+        </ul>
+
+        <h3>Booking Details</h3>
+        <ul style="line-height: 1.8;">
+          <li><strong>Program:</strong> ${booking.programName}</li>
+          <li><strong>Amount Paid:</strong> <span style="color: #2e7d32; font-weight: bold;">£${booking.price}</span></li>
+          <li><strong>Payment Status:</strong> <span style="color: #2e7d32;">PAID</span></li>
+          <li><strong>Payment Time:</strong> ${formattedDate}</li>
+          ${booking.stripePaymentId ? `<li><strong>Payment ID:</strong> ${booking.stripePaymentId}</li>` : ''}
+        </ul>
+
+        ${booking.preferredSlot ? `
+          <h3>Preferred Time</h3>
+          <p><strong>${booking.preferredSlot}</strong></p>
+        ` : ''}
+
+        ${booking.notes ? `
+          <h3>Client Notes</h3>
+          <p style="background: #f5f5f5; padding: 12px; border-radius: 4px; border-left: 4px solid #2c5f4f;">
+            ${booking.notes}
+          </p>
+        ` : ''}
+
+        <h3>Next Steps</h3>
+        <ol style="line-height: 1.8;">
+          <li>Contact the client within 24 hours to confirm session time</li>
+          <li>Send them the health questionnaire</li>
+          <li>Update the booking status in the admin panel</li>
+        </ol>
+
+        <p style="margin-top: 30px;">
+          <a href="${process.env.ADMIN_PANEL_URL || 'http://localhost:3000/admin'}"
+             style="display: inline-block; background-color: #2c5f4f; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold;">
+            View in Admin Panel
+          </a>
+        </p>
+
+        <hr style="margin: 30px 0; border: none; border-top: 1px solid #e0e0e0;">
+
+        <p style="color: #666; font-size: 14px;">
+          <em>This is an automated notification from your Reiki booking system.</em>
+        </p>
+      `
+    });
+    console.log('✅ Admin payment notification sent successfully');
+  } catch (error) {
+    console.error('❌ Failed to send admin payment notification:', error.message);
+  }
+};
+
 module.exports = {
   sendBookingNotification,
   sendPaymentConfirmation,
   sendSessionConfirmation,
-  sendBookingConfirmationToCustomer
+  sendBookingConfirmationToCustomer,
+  sendPaymentNotificationToAdmin
 };

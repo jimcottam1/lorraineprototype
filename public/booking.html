@@ -182,6 +182,185 @@
         #programPrice {
             margin-top: 5px;
         }
+
+        /* Compact Calendar for Booking Form */
+        .booking-calendar {
+            background: #f9fafb;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .booking-calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .booking-calendar-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2c5f4f;
+        }
+
+        .booking-calendar-nav {
+            display: flex;
+            gap: 8px;
+        }
+
+        .booking-calendar-nav button {
+            background: white;
+            border: 1px solid #ddd;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            color: #2c5f4f;
+            transition: all 0.2s;
+        }
+
+        .booking-calendar-nav button:hover {
+            background: #2c5f4f;
+            color: white;
+            border-color: #2c5f4f;
+        }
+
+        .booking-weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            margin-bottom: 5px;
+        }
+
+        .booking-weekday {
+            text-align: center;
+            font-weight: 600;
+            color: #2c5f4f;
+            padding: 8px 0;
+            font-size: 12px;
+        }
+
+        .booking-days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+        }
+
+        .booking-day {
+            aspect-ratio: 1;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .booking-day:hover {
+            border-color: #2c5f4f;
+            background: #f0f8f5;
+        }
+
+        .booking-day.other-month {
+            opacity: 0.3;
+            cursor: default;
+        }
+
+        .booking-day.other-month:hover {
+            border-color: #e0e0e0;
+            background: white;
+        }
+
+        .booking-day.has-slots {
+            background: #e8f5e9;
+            border-color: #4caf50;
+            font-weight: 600;
+        }
+
+        .booking-day.has-slots:hover {
+            background: #c8e6c9;
+        }
+
+        .booking-day.selected {
+            background: #2c5f4f;
+            border-color: #2c5f4f;
+            color: white;
+        }
+
+        .booking-day-dots {
+            display: flex;
+            gap: 2px;
+            margin-top: 2px;
+        }
+
+        .booking-day-dot {
+            width: 4px;
+            height: 4px;
+            background: #4caf50;
+            border-radius: 50%;
+        }
+
+        .booking-day.selected .booking-day-dot {
+            background: white;
+        }
+
+        .slots-for-day {
+            margin-top: 15px;
+        }
+
+        .slots-day-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #2c5f4f;
+            margin-bottom: 10px;
+        }
+
+        .compact-slot-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 8px;
+        }
+
+        .compact-slot-card {
+            border: 2px solid #e0e0e0;
+            padding: 12px 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: white;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 600;
+            color: #2c5f4f;
+        }
+
+        .compact-slot-card:hover {
+            border-color: #2c5f4f;
+            background: #f0f8f5;
+            transform: translateY(-2px);
+        }
+
+        .compact-slot-card.selected {
+            border-color: #2c5f4f;
+            background: #2c5f4f;
+            color: white;
+        }
+
+        .no-date-selected {
+            text-align: center;
+            color: #999;
+            padding: 15px;
+            font-size: 14px;
+            font-style: italic;
+        }
     </style>
 </head>
 <body>
@@ -226,13 +405,44 @@
                 <input type="tel" id="phone" name="phone" placeholder="07700 900000" required>
             </div>
 
-            <!-- Scheduling Preferences -->
+            <!-- Scheduling Preferences with Calendar -->
             <div class="form-group">
                 <label>Select Available Time Slot <span class="required">*</span></label>
-                <small>Choose from Lorraine's available appointment times</small>
-                <div id="availableSlotsContainer" style="margin-top: 15px;">
+                <small>Select a day on the calendar, then choose your preferred time</small>
+
+                <div class="booking-calendar" id="bookingCalendarContainer" style="margin-top: 15px; display: none;">
+                    <div class="booking-calendar-header">
+                        <div class="booking-calendar-title" id="bookingMonthYear"></div>
+                        <div class="booking-calendar-nav">
+                            <button type="button" onclick="previousBookingMonth()">←</button>
+                            <button type="button" onclick="nextBookingMonth()">→</button>
+                            <button type="button" onclick="goToBookingToday()">Today</button>
+                        </div>
+                    </div>
+
+                    <div class="booking-weekdays">
+                        <div class="booking-weekday">S</div>
+                        <div class="booking-weekday">M</div>
+                        <div class="booking-weekday">T</div>
+                        <div class="booking-weekday">W</div>
+                        <div class="booking-weekday">T</div>
+                        <div class="booking-weekday">F</div>
+                        <div class="booking-weekday">S</div>
+                    </div>
+
+                    <div class="booking-days" id="bookingCalendarDays">
+                        <!-- Calendar days will be generated here -->
+                    </div>
+
+                    <div class="slots-for-day" id="slotsForDay">
+                        <div class="no-date-selected">Select a day with available slots</div>
+                    </div>
+                </div>
+
+                <div id="availableSlotsContainer">
                     <p style="text-align: center; color: #999; padding: 20px;">Loading available slots...</p>
                 </div>
+
                 <input type="hidden" id="selectedSlotId" name="selectedSlotId" required>
             </div>
 
@@ -250,6 +460,8 @@
     <script>
         let availableSlots = [];
         let selectedSlot = null;
+        let bookingCurrentMonth = new Date();
+        let bookingSelectedDate = null;
 
         // API URL configuration
         const API_URL = window.location.hostname === 'localhost'
@@ -264,7 +476,18 @@
 
                 if (data.success) {
                     availableSlots = data.slots;
-                    displayAvailableSlots();
+
+                    if (availableSlots.length > 0) {
+                        // Show calendar view
+                        document.getElementById('bookingCalendarContainer').style.display = 'block';
+                        document.getElementById('availableSlotsContainer').style.display = 'none';
+                        renderBookingCalendar();
+                    } else {
+                        // Show no slots message
+                        document.getElementById('bookingCalendarContainer').style.display = 'none';
+                        document.getElementById('availableSlotsContainer').innerHTML =
+                            '<p style="color: #999; text-align: center; padding: 20px;">No available slots at the moment. Please contact Lorraine at 07846 633248 to schedule.</p>';
+                    }
                 } else {
                     document.getElementById('availableSlotsContainer').innerHTML =
                         '<p style="color: #d32f2f;">Unable to load available slots. Please try again later.</p>';
@@ -276,26 +499,162 @@
             }
         }
 
-        // Display available slots
-        function displayAvailableSlots() {
-            const container = document.getElementById('availableSlotsContainer');
+        // Calendar navigation functions
+        function previousBookingMonth() {
+            bookingCurrentMonth.setMonth(bookingCurrentMonth.getMonth() - 1);
+            renderBookingCalendar();
+        }
 
-            if (availableSlots.length === 0) {
-                container.innerHTML = '<p style="color: #999;">No available slots at the moment. Please contact Lorraine at 07846 633248 to schedule.</p>';
+        function nextBookingMonth() {
+            bookingCurrentMonth.setMonth(bookingCurrentMonth.getMonth() + 1);
+            renderBookingCalendar();
+        }
+
+        function goToBookingToday() {
+            bookingCurrentMonth = new Date();
+            renderBookingCalendar();
+        }
+
+        // Render booking calendar
+        function renderBookingCalendar() {
+            const year = bookingCurrentMonth.getFullYear();
+            const month = bookingCurrentMonth.getMonth();
+
+            // Update month/year display
+            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+                'July', 'August', 'September', 'October', 'November', 'December'];
+            document.getElementById('bookingMonthYear').textContent = `${monthNames[month]} ${year}`;
+
+            // Get first day of month and number of days
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            const daysInMonth = lastDay.getDate();
+            const startingDayOfWeek = firstDay.getDay();
+
+            // Get previous month's last days
+            const prevMonthLastDay = new Date(year, month, 0);
+            const prevMonthDays = prevMonthLastDay.getDate();
+
+            // Group slots by date for quick lookup
+            const slotsByDate = {};
+            availableSlots.forEach(slot => {
+                const slotDate = new Date(slot.date);
+                const dateKey = `${slotDate.getFullYear()}-${String(slotDate.getMonth() + 1).padStart(2, '0')}-${String(slotDate.getDate()).padStart(2, '0')}`;
+                if (!slotsByDate[dateKey]) {
+                    slotsByDate[dateKey] = [];
+                }
+                slotsByDate[dateKey].push(slot);
+            });
+
+            const calendarDays = document.getElementById('bookingCalendarDays');
+            calendarDays.innerHTML = '';
+
+            // Add previous month's days
+            for (let i = startingDayOfWeek - 1; i >= 0; i--) {
+                const day = prevMonthDays - i;
+                const dayDiv = document.createElement('div');
+                dayDiv.className = 'booking-day other-month';
+                dayDiv.textContent = day;
+                calendarDays.appendChild(dayDiv);
+            }
+
+            // Add current month's days
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const daySlots = slotsByDate[dateKey] || [];
+                const hasSlots = daySlots.length > 0;
+
+                const dayDiv = document.createElement('div');
+                dayDiv.className = 'booking-day';
+                if (hasSlots) {
+                    dayDiv.classList.add('has-slots');
+                }
+
+                // Check if this is the selected date
+                if (bookingSelectedDate && bookingSelectedDate === dateKey) {
+                    dayDiv.classList.add('selected');
+                }
+
+                const dayNumber = document.createElement('div');
+                dayNumber.textContent = day;
+                dayDiv.appendChild(dayNumber);
+
+                // Add dots to show number of slots
+                if (hasSlots && daySlots.length <= 5) {
+                    const dotsContainer = document.createElement('div');
+                    dotsContainer.className = 'booking-day-dots';
+                    for (let i = 0; i < Math.min(daySlots.length, 5); i++) {
+                        const dot = document.createElement('div');
+                        dot.className = 'booking-day-dot';
+                        dotsContainer.appendChild(dot);
+                    }
+                    dayDiv.appendChild(dotsContainer);
+                }
+
+                if (hasSlots) {
+                    dayDiv.onclick = () => selectBookingDate(dateKey, daySlots);
+                }
+
+                calendarDays.appendChild(dayDiv);
+            }
+
+            // Add next month's days to fill the grid
+            const totalCells = calendarDays.children.length;
+            const remainingCells = 42 - totalCells; // 6 rows × 7 days
+            for (let day = 1; day <= remainingCells; day++) {
+                const dayDiv = document.createElement('div');
+                dayDiv.className = 'booking-day other-month';
+                dayDiv.textContent = day;
+                calendarDays.appendChild(dayDiv);
+            }
+
+            // If a date is selected, update the slots display
+            if (bookingSelectedDate) {
+                const daySlots = slotsByDate[bookingSelectedDate] || [];
+                displaySlotsForDay(bookingSelectedDate, daySlots);
+            }
+        }
+
+        // Select a date and show its slots
+        function selectBookingDate(dateKey, slots) {
+            bookingSelectedDate = dateKey;
+            renderBookingCalendar(); // Re-render to update selected state
+            displaySlotsForDay(dateKey, slots);
+        }
+
+        // Display slots for selected day
+        function displaySlotsForDay(dateKey, slots) {
+            const container = document.getElementById('slotsForDay');
+
+            if (slots.length === 0) {
+                container.innerHTML = `
+                    <div class="slots-day-title">${formatBookingDateKey(dateKey)}</div>
+                    <p style="text-align: center; color: #999; padding: 15px; font-size: 14px;">No slots available for this day</p>
+                `;
                 return;
             }
 
             container.innerHTML = `
-                <div class="slot-grid">
-                    ${availableSlots.map(slot => `
-                        <div class="slot-card" onclick="selectSlot('${slot.id}')">
-                            <div class="slot-date">${slot.displayDate}</div>
-                            <div class="slot-time">${slot.displayTime}</div>
-                            <div class="slot-duration">${slot.duration} minutes</div>
+                <div class="slots-day-title">${formatBookingDateKey(dateKey)} - Select a time:</div>
+                <div class="compact-slot-grid">
+                    ${slots.map(slot => `
+                        <div class="compact-slot-card ${selectedSlot === slot.id ? 'selected' : ''}" onclick="selectSlot('${slot.id}')">
+                            ${slot.displayTime}
                         </div>
                     `).join('')}
                 </div>
             `;
+        }
+
+        // Format date key for display
+        function formatBookingDateKey(dateKey) {
+            const [year, month, day] = dateKey.split('-');
+            const date = new Date(year, month - 1, day);
+            return date.toLocaleDateString('en-GB', {
+                weekday: 'long',
+                day: 'numeric',
+                month: 'long'
+            });
         }
 
         // Select a slot
@@ -303,11 +662,21 @@
             selectedSlot = slotId;
             document.getElementById('selectedSlotId').value = slotId;
 
-            // Update visual selection
-            document.querySelectorAll('.slot-card').forEach(card => {
-                card.classList.remove('selected');
+            // Update visual selection - refresh the slots display
+            const slotsByDate = {};
+            availableSlots.forEach(slot => {
+                const slotDate = new Date(slot.date);
+                const dateKey = `${slotDate.getFullYear()}-${String(slotDate.getMonth() + 1).padStart(2, '0')}-${String(slotDate.getDate()).padStart(2, '0')}`;
+                if (!slotsByDate[dateKey]) {
+                    slotsByDate[dateKey] = [];
+                }
+                slotsByDate[dateKey].push(slot);
             });
-            event.target.closest('.slot-card').classList.add('selected');
+
+            if (bookingSelectedDate) {
+                const daySlots = slotsByDate[bookingSelectedDate] || [];
+                displaySlotsForDay(bookingSelectedDate, daySlots);
+            }
         }
 
         // Pre-select program from URL parameter
