@@ -99,44 +99,58 @@
         }
         .slot-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 12px;
-            margin-top: 10px;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
         }
         .slot-card {
-            border: 2px solid #ddd;
-            padding: 15px;
-            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+            padding: 20px 15px;
+            border-radius: 10px;
             cursor: pointer;
-            transition: all 0.3s;
-            background: white;
+            transition: all 0.2s ease;
+            background: #ffffff;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
         .slot-card:hover {
             border-color: #2c5f4f;
             background: #f0f8f5;
+            box-shadow: 0 4px 8px rgba(44, 95, 79, 0.15);
+            transform: translateY(-2px);
         }
         .slot-card.selected {
             border-color: #2c5f4f;
-            background: #2c5f4f;
+            background: linear-gradient(135deg, #2c5f4f 0%, #234a3d 100%);
             color: white;
+            box-shadow: 0 6px 12px rgba(44, 95, 79, 0.3);
         }
-        .slot-card.selected .slot-date {
-            color: #e8f5e9;
+        .slot-card.selected .slot-date,
+        .slot-card.selected .slot-time,
+        .slot-card.selected .slot-duration {
+            color: white;
         }
         .slot-date {
             font-weight: 600;
-            color: #2c5f4f;
-            margin-bottom: 5px;
-            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         .slot-time {
-            font-size: 18px;
+            font-size: 22px;
             font-weight: 700;
-            margin-bottom: 3px;
+            margin-bottom: 5px;
+            color: #2c5f4f;
         }
         .slot-duration {
-            font-size: 13px;
-            opacity: 0.8;
+            font-size: 12px;
+            opacity: 0.75;
+            color: #888;
+        }
+        .slot-card.selected .slot-time {
+            color: white;
         }
         .submit-btn {
             background: #2c5f4f;
