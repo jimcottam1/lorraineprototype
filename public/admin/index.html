@@ -328,35 +328,87 @@
         }
 
         .time-chip {
-            padding: 6px 12px;
-            background: #e3f2fd;
+            padding: 8px 14px;
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border: 1px solid #90caf9;
             color: #1565c0;
-            border-radius: 16px;
+            border-radius: 20px;
             display: inline-flex;
             align-items: center;
             gap: 8px;
             font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
 
         .time-chip button {
             background: none;
             border: none;
-            color: #1565c0;
+            color: #d32f2f;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 18px;
             font-weight: bold;
+            padding: 0 4px;
+            transition: color 0.2s;
+        }
+
+        .time-chip button:hover {
+            color: #b71c1c;
         }
 
         .slot-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px;
-            border-bottom: 1px solid #f0f0f0;
+            padding: 16px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            background: white;
+            transition: all 0.2s;
         }
 
         .slot-item:hover {
-            background: #fafafa;
+            background: #f5f5f5;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transform: translateX(4px);
+        }
+
+        .slot-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .slot-date {
+            font-weight: 600;
+            color: #2c5f4f;
+            font-size: 15px;
+        }
+
+        .slot-time {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .slot-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .slot-status.available {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .slot-status.booked {
+            background: #fff3e0;
+            color: #e65100;
         }
     </style>
 </head>
