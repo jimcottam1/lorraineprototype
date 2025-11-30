@@ -45,12 +45,14 @@ const adminRoutes = require('./routes/admin');
 const stripeRoutes = require('./routes/stripe');
 const slotRoutes = require('./routes/slots');
 const contentRoutes = require('./routes/content');
+const emailTemplateRoutes = require('./routes/emailTemplates');
 
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/slots', slotRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/webhooks', stripeRoutes);
 app.use('/api/content', contentRoutes);
+app.use('/api/email-templates', emailTemplateRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

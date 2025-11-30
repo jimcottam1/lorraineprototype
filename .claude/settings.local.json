@@ -32,7 +32,10 @@
       "Bash(powershell -Command:*)",
       "Bash(cmd /c \"taskkill /F /PID 17172\")",
       "Bash(timeout /t 5)",
-      "Bash(start http://localhost:3000/booking.html)"
+      "Bash(start http://localhost:3000/booking.html)",
+      "Bash(cmd /c \"taskkill /F /PID 5384\")",
+      "Bash(copy email.js email.js.backup)",
+      "Bash(cmd /c \"copy email.js email.js.backup\")"
     ],
     "deny": [],
     "ask": []
