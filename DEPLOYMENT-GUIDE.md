@@ -1,303 +1,213 @@
-# Production Deployment Guide
+# Lorraine's Reiki Booking System - Questionnaire Feature Deployment Guide
 
-## 🚀 Deploying Your Admin Panel to Production
-
-This guide walks you through deploying both the backend and frontend to production.
+**Project:** Reiki Your Path to Wellness - Booking System  
+**Feature:** Post-Payment Wellness Questionnaire  
+**Date:** December 1, 2025  
+**Developer:** Jim Cottam  
+**Client:** Lorraine (Reiki Practitioner)
 
 ---
 
-## Part 1: Deploy Backend (Render)
+## Table of Contents
 
-Your backend is already on Render at: `https://lorraine-booking-backend.onrender.com`
+1. [Executive Summary](#executive-summary)
+2. [Feature Overview](#feature-overview)
+3. [Service Architecture & Ownership](#service-architecture--ownership)
+4. [Production Deployment Checklist](#production-deployment-checklist)
+5. [Troubleshooting Guide](#troubleshooting-guide)
+6. [Ongoing Maintenance](#ongoing-maintenance)
 
-### Step 1: Commit Your Changes
+---
 
-```bash
-git add .
-git commit -m "Add content management system with admin panel"
-git push origin main
+## Executive Summary
+
+### What Was Built
+
+A complete wellness questionnaire system that:
+- Automatically sends customers a questionnaire link after payment
+- Pre-fills customer information to save time
+- Stores responses securely in the database
+- Displays formatted responses in the admin panel
+- Integrates seamlessly with the existing booking flow
+
+### Current Status
+
+✅ **Feature Complete** - All code deployed to GitHub  
+⚠️ **Rate Limiting Issue** - Email delays implemented, needs testing  
+🔄 **Testing Phase** - Awaiting final production verification
+
+---
+
+## Service Architecture & Ownership
+
+### Current Setup: All Under Jim's Profile
+
+| Service | Purpose | Monthly Cost | Notes |
+|---------|---------|--------------|-------|
+| **MongoDB Atlas** | Database hosting | Free tier | Stores all bookings, questionnaires |
+| **Render.com** | Backend hosting | Free tier | Runs Node.js server |
+| **Resend** | Email delivery | Free tier | **HAS RATE LIMITING ISSUES** |
+| **GitHub** | Code repository | Free | Source code storage |
+| **Stripe** | Payment processing | Test mode | **MUST TRANSFER TO LORRAINE** |
+
+### Recommended Ownership Split
+
+#### LORRAINE MUST OWN (Client Business Assets)
+
+**1. Stripe Account** - HIGHEST PRIORITY
+- **Why:** Money goes directly to her bank, required for tax/accounting
+- **Cost:** Free + 1.5% + 20p per transaction
+- **Action:** Create account at stripe.com, verify business, connect bank
+- **Timeline:** 2 hours setup + 1-2 days verification
+
+**2. Domain Name** (if applicable)
+- **Why:** Owns business web presence
+- **Cost:** ~£10-15/year
+
+#### JIM RETAINS (Developer/Operations)
+
+**1-4. All Other Services**
+- **Why:** Technical management, reusable for multiple clients
+- **Security:** Each client gets separate database
+- **Benefit:** Shared infrastructure reduces costs
+
+### Monthly Cost Breakdown
+
+**Minimum (Current - Has Issues):**
+- Total: £0/month + Stripe fees
+- Problem: Email rate limiting
+
+**Recommended Production:**
+- Render: $7/month (£5.50)
+- Resend Pro: $20/month (£16) - **FIXES EMAIL ISSUES**
+- **Total: £21.50/month** + Stripe fees
+
+---
+
+## Production Deployment Checklist
+
+### Completed
+- [x] Code written and deployed
+- [x] Email template created
+- [x] Auto-seeding implemented
+- [x] Rate limiting delays (1 second) added
+- [x] Admin panel updated
+
+### Critical Issues
+
+**1. EMAIL RATE LIMITING - BLOCKING PRODUCTION**
+- Problem: Resend free = 2 emails/sec, need 3
+- Impact: Questionnaire email fails (429 error)
+- Solutions:
+  - A) Upgrade Resend Pro ($20/month) - RECOMMENDED
+  - B) Test 1-second delays - Implemented, needs testing
+- Decision: Needs testing OR budget approval
+
+**2. STRIPE OWNERSHIP - BLOCKING GO-LIVE**
+- Problem: Using Jim's test account
+- Impact: Can't process real payments
+- Action: Lorraine creates Stripe account
+- Help: Jim assists with setup
+
+### Testing Needed
+
+1. Email Flow Test
+   - [ ] Make test booking with payment
+   - [ ] Verify ALL 3 emails arrive
+   - [ ] Check Render logs for 429 errors
+
+2. Questionnaire Test
+   - [ ] Click link, verify pre-fill
+   - [ ] Submit questionnaire
+   - [ ] Check admin panel shows responses
+
+---
+
+## Troubleshooting Guide
+
+### Questionnaire Email Not Received
+
+**Check Render Logs:**
+```
+❌ Resend API error: rate_limit_exceeded
+statusCode: 429
 ```
 
-### Step 2: Render Will Auto-Deploy
+**Solutions:**
+1. Check spam folder
+2. If rate limiting: Upgrade Resend OR wait between tests
+3. Verify template exists in database
 
-Render automatically deploys when you push to GitHub. The deployment includes:
-- ✅ New content management routes
-- ✅ Program, Testimonial, and SiteSettings models
-- ✅ Extended admin panel with new tabs
-
-### Step 3: Seed Production Database (ONE TIME ONLY)
-
-After the deployment completes on Render:
-
-1. Go to your Render dashboard
-2. Click on your `lorraine-booking-backend` service
-3. Click **"Shell"** tab
-4. Run this command:
-   ```bash
-   npm run seed
-   ```
-5. Wait for the success message
-
-**IMPORTANT:** Only run this ONCE to populate initial data. Running it again will clear and re-add all content!
-
-### Step 4: Verify Backend is Working
-
-Test your API endpoints:
-- https://lorraine-booking-backend.onrender.com/api/health
-- https://lorraine-booking-backend.onrender.com/api/content/programs
-- https://lorraine-booking-backend.onrender.com/api/content/testimonials
-- https://lorraine-booking-backend.onrender.com/api/content/settings
-
-All should return JSON data.
-
----
-
-## Part 2: Deploy Frontend
-
-You have several options for hosting the frontend:
-
-### Option A: Netlify (Recommended - Easiest)
-
-1. **Sign up at** https://www.netlify.com (free)
-
-2. **Drag & Drop Deploy:**
-   - Create a new site
-   - Drag these files/folders into Netlify:
-     - `index.html`
-     - `booking.html`
-     - `questionnaire.html`
-     - `booking-confirmation.html`
-     - `css/` folder
-     - `js/` folder
-     - `images/` folder (when you have images)
-     - `media/` folder (when you have media files)
-
-3. **Done!** Your site will be at: `https://your-site-name.netlify.app`
-
-4. **Optional:** Add custom domain in Netlify settings
-
-### Option B: Vercel
-
-1. **Sign up at** https://vercel.com (free)
-
-2. **Deploy via GitHub:**
-   - Push your frontend files to a GitHub repo
-   - Import the repo in Vercel
-   - Vercel auto-deploys on every push
-
-3. **Or Drag & Drop:**
-   - Similar to Netlify, drag your files
-
-### Option C: GitHub Pages (Free)
-
-1. **Push to GitHub:**
-   ```bash
-   git add .
-   git commit -m "Deploy frontend"
-   git push origin main
-   ```
-
-2. **Enable GitHub Pages:**
-   - Go to repository Settings
-   - Scroll to "Pages"
-   - Select branch: `main`
-   - Select folder: `/ (root)`
-   - Save
-
-3. **Your site will be at:** `https://yourusername.github.io/repository-name`
-
-### Option D: Same Server as Backend (Render)
-
-If you want everything on one server:
-
-1. Your backend already serves static files from `/public`
-2. Move your frontend files to `/public`:
-   ```
-   booking-backend/
-   └── public/
-       ├── admin/ (already there)
-       ├── index.html (add this)
-       ├── booking.html (add this)
-       ├── questionnaire.html (add this)
-       ├── css/ (add this)
-       ├── js/ (add this)
-       └── images/ (add this)
-   ```
-3. Access at: `https://lorraine-booking-backend.onrender.com`
-4. Admin at: `https://lorraine-booking-backend.onrender.com/admin`
-
----
-
-## Part 3: Configure API URL
-
-The frontend needs to know where your backend is.
-
-### Update main.js
-
-Open `js/main.js` and verify the API_URL is correct:
-
-```javascript
-const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-    ? 'http://localhost:3000/api'
-    : 'https://lorraine-booking-backend.onrender.com/api';
-```
-
-This automatically uses:
-- `localhost:3000` when testing locally
-- `lorraine-booking-backend.onrender.com` when in production
-
-**No changes needed!** Already configured correctly.
-
----
-
-## Part 4: Test Production
-
-### Test the Frontend
-
-1. Visit your deployed frontend URL (Netlify/Vercel/GitHub Pages)
-2. Check that programs, testimonials, and settings load
-3. Verify phone numbers, social media links work
-4. Test booking links
-
-### Test the Admin Panel
-
-1. Visit: `https://lorraine-booking-backend.onrender.com/admin`
-2. Login with your admin password
-3. Try editing a program
-4. Refresh your frontend - changes should appear!
-
----
-
-## 🔒 Security Checklist
-
-Before going live:
-
-- [ ] Environment variables set on Render (MongoDB URI, JWT_SECRET, etc.)
-- [ ] Strong admin password configured
-- [ ] CORS configured to only allow your frontend domain (optional)
-- [ ] MongoDB connection secure
-- [ ] Tested all admin functions in production
-
----
-
-## 📱 Recommended Deployment Setup
-
-**Best Practice Setup:**
-
-1. **Backend (API + Admin):** Render
-   - URL: `https://lorraine-booking-backend.onrender.com`
-   - Admin Panel: `https://lorraine-booking-backend.onrender.com/admin`
-
-2. **Frontend (Website):** Netlify or Vercel
-   - URL: `https://lorrainereiki.netlify.app` (or custom domain)
-   - Cleaner separation
-   - Faster static file serving
-   - Easy SSL/CDN
-
-3. **Custom Domain (Optional):**
-   - Frontend: `https://lorrainereiki.com`
-   - Backend: `https://api.lorrainereiki.com`
-
----
-
-## 🔄 Deployment Workflow
-
-### When You Make Changes
-
-**Backend Changes (models, routes, etc.):**
-```bash
-cd booking-backend
-git add .
-git commit -m "Update backend"
-git push origin main
-# Render auto-deploys
-```
-
-**Frontend Changes (HTML, CSS, JS):**
-```bash
-git add .
-git commit -m "Update frontend"
-git push origin main
-# Netlify/Vercel auto-deploys
-```
-
-**Content Changes (via Admin Panel):**
-- No deployment needed!
-- Login to admin, make changes, they appear immediately
-
----
-
-## 🆘 Troubleshooting Production
-
-### Frontend not loading content
+### Form Not Pre-filling
 
 **Check:**
-1. API URL is correct in `js/main.js`
-2. Backend is running (visit /api/health)
-3. CORS is not blocking requests
-4. Browser console for errors (F12)
-
-**Fix CORS if needed:**
-
-In `booking-backend/server.js`, update CORS:
-```javascript
-app.use(cors({
-  origin: [
-    'http://localhost:8080',
-    'https://your-netlify-site.netlify.app',
-    'https://your-custom-domain.com'
-  ],
-  credentials: true
-}));
-```
-
-### Admin panel not accessible
-
-**Check:**
-1. Backend is deployed and running
-2. URL is correct: `/admin` (not `/admin.html`)
-3. Admin password is set in environment variables
-
-### Database is empty
-
-Run the seed script on Render (one time):
-```bash
-npm run seed
-```
-
-### Images not showing
-
-Upload images to your deployment:
-- `images/lorraine-portrait.jpg`
-- `images/chakra-body.png`
-- `media/intro-video.mp4`
-- `media/sample-meditation.mp3`
+- URL format: `?booking_id=ABC123`
+- Browser console (F12) for errors
+- API: `https://lorraine-booking-backend.onrender.com/api/bookings/ABC123`
 
 ---
 
-## ✅ Post-Deployment Checklist
+## Environment Variables (Render)
 
-After deploying to production:
+**MUST UPDATE for Production:**
 
-- [ ] Backend API responding (test /api/health)
-- [ ] Database seeded with initial content
-- [ ] Admin panel accessible and login works
-- [ ] Frontend loading and displaying content
-- [ ] Can edit content in admin panel
-- [ ] Changes appear on frontend after refresh
-- [ ] All links working (booking, social media, etc.)
-- [ ] Mobile view working
-- [ ] SSL certificate active (HTTPS)
-- [ ] Give Lorraine the admin URL and credentials
+```
+# Stripe - UPDATE WITH LORRAINE'S LIVE KEYS
+STRIPE_SECRET_KEY=sk_live_... # Need from Lorraine
+STRIPE_WEBHOOK_SECRET=whsec_... # Need from Lorraine
+
+# URLs - UPDATE WITH REAL DOMAIN
+FRONTEND_URL=https://yourdomain.com
+ADMIN_EMAIL=lorraine@email.com
+```
 
 ---
 
-## 🎉 You're Live!
+## Next Steps
 
-Once deployed, Lorraine can:
-- Access admin panel from anywhere
-- Edit content on any device
-- Make changes without touching code
-- See updates appear immediately
+### This Week
+1. Test rate limit fix (1-second delays)
+2. If fails: MUST upgrade Resend
+3. Help Lorraine create Stripe account
+4. Update environment variables
 
-No more code deployments for content changes! 🚀
+### Decision Points
+- Rate limit tests PASS → Can go live
+- Rate limit tests FAIL → MUST upgrade Resend first ($20/month)
+- Who pays for Resend Pro? (Jim infrastructure or Lorraine business expense?)
+
+---
+
+## Ongoing Maintenance
+
+### Weekly: Check logs, verify emails sending
+### Monthly: Review statistics, update dependencies
+
+### Contact Jim When:
+- Server down
+- Emails failing
+- Payments not working
+- Need feature updates
+
+---
+
+## Summary
+
+**What Works:**
+✅ Questionnaire feature complete
+✅ Admin panel shows responses
+✅ Form pre-fills customer data
+✅ All code deployed
+
+**What Needs Fixing:**
+⚠️ Email rate limiting (testing in progress)
+🚨 Stripe account (Lorraine must create)
+💰 Consider service upgrades for reliability
+
+**Recommended Monthly Cost:** £21.50 for professional service
+
+---
+
+**For Support:** Jim Cottam - jim_cottam@yahoo.co.uk
+
+**Version:** 1.0 | **Date:** December 1, 2025
