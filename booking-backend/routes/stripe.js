@@ -78,18 +78,21 @@ async function handleCheckoutComplete(session) {
     console.log(`✅ Booking ${bookingId} marked as paid`);
 
     // Send emails with delays to avoid rate limiting (Resend free tier: 2 emails/second)
+    // Using 1 second delays to be safe and account for any other concurrent emails
 
     // Send payment confirmation email to customer
     await sendPaymentConfirmation(booking);
 
-    // Wait 600ms before next email (respects 2/second rate limit)
-    await new Promise(resolve => setTimeout(resolve, 600));
+    // Wait 1 second before next email
+    console.log('⏱️  Waiting 1s before next email...');
+    await new Promise(resolve => setTimeout(resolve, 1000));
 
     // Send payment notification to admin
     await sendPaymentNotificationToAdmin(booking);
 
-    // Wait 600ms before next email
-    await new Promise(resolve => setTimeout(resolve, 600));
+    // Wait 1 second before next email
+    console.log('⏱️  Waiting 1s before next email...');
+    await new Promise(resolve => setTimeout(resolve, 1000));
 
     // Send questionnaire invitation email to customer
     await sendQuestionnaireInvitation(booking);
