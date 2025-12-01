@@ -144,6 +144,95 @@ After payment, you automatically receive:
 
 ---
 
+## Admin Panel Detailed Functionality
+
+The admin panel is accessed at `/admin` and provides Lorraine with complete control over the booking system:
+
+### Dashboard Overview
+- View all bookings in a sortable table
+- Filter by status (pending, paid, confirmed, completed, cancelled)
+- Quick visual indicators:
+  - Payment status badges (colored)
+  - Questionnaire completion indicators (📋 ✓)
+  - Status labels for each booking
+
+### Booking Details Modal
+When clicking "View" on any booking, Lorraine sees:
+- **Client Information**: Name, email, phone, preferred contact method
+- **Booking Details**: Program name, price, booking date
+- **Payment Information**:
+  - Payment status (pending/paid/refunded)
+  - Stripe payment ID
+  - Payment date/time
+- **Session Details**:
+  - Preferred time slots
+  - Confirmed date and time
+  - Any special notes from the client
+- **Wellness Questionnaire Responses** (if completed):
+  - Previous Reiki experience
+  - Wellness goals and intentions
+  - Health conditions or concerns
+  - Specific questions for Lorraine
+  - Preferred communication method
+  - Submission date
+  - All beautifully formatted (not raw data)
+
+### Actions Available
+- **Update Status**: Change booking status with dropdown
+- **Confirm Session**: Set confirmed date and time, send email to client
+- **Add Admin Notes**: Private notes not visible to clients
+- **Send Confirmation Email**: Resend session confirmation
+- **Delete Booking**: Remove booking from system (with confirmation)
+
+### Time Slot Management
+- **View All Slots**: See all available time slots in calendar view
+- **Create Single Slot**: Add one time slot with date/time
+- **Create Multiple Slots**: Batch create slots for recurring availability
+- **Edit Slots**: Modify existing slot times
+- **Delete Slots**: Remove slots that are no longer available
+- **Slot Status**: See which slots have been booked
+
+### Email Template Editor
+- **View All Templates**: List of all system email templates
+- **Edit Templates**: WYSIWYG editor for each template
+- **Variable Support**: Use {{placeholders}} for dynamic content
+- **Preview**: See how emails will look before sending
+- **Test Send**: Send test emails to verify formatting
+- **Active/Inactive**: Toggle templates on/off
+
+### Statistics (Dashboard)
+- Total bookings count
+- Revenue tracking
+- Completed sessions
+- Pending confirmations
+- Quick filters for recent activity
+
+---
+
+## Lorraine's Fit & Finish Requests
+
+### Content Updates Completed
+The following refinements have been made based on Lorraine's feedback:
+
+**1. Treatment Plans Section**
+- ✅ Removed case study figures at price points for Weight Loss and Menopause programmes
+- ✅ Changed "Pathway to Wellness" to be marked as "Popular" instead of other programmes
+- ✅ Updated spelling throughout site to use British English "programme" (not "program")
+
+**2. Medical Disclaimer Update**
+- ✅ Changed "Please Note:" text to:
+  > "Reiki is complementary to medical treatment and it is advised you never stop medication without consulting your GP or healthcare professional."
+
+**3. Upcoming Content**
+Lorraine plans to add:
+- Video introduction to the programmes (recording this week)
+- Guided meditation audio/video
+- Draft meditation already available for testing purposes
+
+These updates ensure the website reflects Lorraine's professional approach and meets UK healthcare communication standards.
+
+---
+
 ## Service Architecture & Deployment
 
 ### Current Production Setup
