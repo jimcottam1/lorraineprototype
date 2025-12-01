@@ -210,7 +210,7 @@ After payment, you automatically receive:
 
 **2. Test Email Rate Limiting**
 - Make test bookings to verify all 3 emails send
-- If fails: Consider Resend Pro upgrade ($20/month)
+- If fails: Consider Resend upgrade
 - If passes: Can continue on free tier
 
 ---
@@ -230,9 +230,9 @@ After payment, you automatically receive:
 - Problem: Resend free = 2 emails/sec, need 3
 - Impact: Questionnaire email fails (429 error)
 - Solutions:
-  - A) Upgrade Resend Pro ($20/month) - RECOMMENDED
+  - A) Upgrade Resend Pro - RECOMMENDED
   - B) Test 1-second delays - Implemented, needs testing
-- Decision: Needs testing OR budget approval
+- Decision: Needs testing
 
 **2. STRIPE OWNERSHIP - BLOCKING GO-LIVE**
 - Problem: Using Jim's test account
@@ -304,8 +304,7 @@ ADMIN_EMAIL=lorraine@email.com
 
 ### Decision Points
 - Rate limit tests PASS → Can go live
-- Rate limit tests FAIL → MUST upgrade Resend first ($20/month)
-- Who pays for Resend Pro? (Jim infrastructure or Lorraine business expense?)
+- Rate limit tests FAIL → May need to upgrade Resend
 
 ---
 
@@ -333,9 +332,6 @@ ADMIN_EMAIL=lorraine@email.com
 **What Needs Fixing:**
 ⚠️ Email rate limiting (testing in progress)
 🚨 Stripe account (Lorraine must create)
-💰 Consider service upgrades for reliability
-
-**Recommended Monthly Cost:** £21.50 for professional service
 
 ---
 
