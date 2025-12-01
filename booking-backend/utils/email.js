@@ -39,23 +39,33 @@ async function sendEmailFromTemplate(templateId, recipient, data) {
     const template = await EmailTemplate.findOne({ templateId, active: true });
 
     if (!template) {
-      console.error(`Template not found or inactive: ${templateId}`);
+      console.error(`❌ Template not found or inactive: ${templateId}`);
       return;
     }
 
     const subject = replaceTemplateVariables(template.subject, data);
     const htmlBody = replaceTemplateVariables(template.htmlBody, data);
 
-    await resend.emails.send({
+    console.log(`📤 Attempting to send email: ${templateId} to ${recipient}`);
+
+    const response = await resend.emails.send({
       from: process.env.RESEND_FROM_EMAIL || 'bookings@yourdomain.com',
       to: recipient,
       subject: subject,
       html: htmlBody
     });
 
-    console.log(`✅ Email sent using template: ${templateId}`);
+    if (response.error) {
+      console.error(`❌ Resend API error for ${templateId}:`, response.error);
+      console.error(`   Details:`, JSON.stringify(response.error, null, 2));
+      return;
+    }
+
+    console.log(`✅ Email sent successfully using template: ${templateId}`);
+    console.log(`   Email ID: ${response.data?.id || 'N/A'}`);
   } catch (error) {
     console.error(`❌ Failed to send email using template ${templateId}:`, error.message);
+    console.error(`   Full error:`, error);
   }
 }
 
