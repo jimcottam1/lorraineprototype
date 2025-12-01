@@ -8,14 +8,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
-    <!-- EmailJS SDK -->
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-    <script type="text/javascript">
-        (function(){
-            // Initialize EmailJS with your public key
-            emailjs.init('lgc04eJxeOiQSZHe4'); // EmailJS Public Key
-        })();
-    </script>
     <style>
         .questionnaire-container {
             max-width: 800px;
@@ -208,7 +200,56 @@
     </div>
 
     <script>
-        document.getElementById('questionnaireForm').addEventListener('submit', function(e) {
+        // Get booking ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const bookingId = urlParams.get('booking_id');
+
+        // If no booking ID, show error
+        if (!bookingId) {
+            document.getElementById('errorMessage').innerHTML = '<p>Invalid questionnaire link. Please use the link from your confirmation email.</p>';
+            document.getElementById('errorMessage').style.display = 'block';
+            document.getElementById('questionnaireForm').style.display = 'none';
+        } else {
+            // Fetch booking details to pre-fill form
+            fetchBookingDetails();
+        }
+
+        async function fetchBookingDetails() {
+            try {
+                const response = await fetch(`/api/bookings/${bookingId}`);
+                const booking = await response.json();
+
+                if (response.ok) {
+                    // Pre-fill form fields with booking data
+                    document.getElementById('fullName').value = booking.fullName || '';
+                    document.getElementById('email').value = booking.email || '';
+                    document.getElementById('phone').value = booking.phone || '';
+
+                    // Map program code to select option
+                    const programSelect = document.getElementById('program');
+                    const programMapping = {
+                        'wellness': 'wellness',
+                        'weightloss': 'weightloss',
+                        'menopause': 'menopause',
+                        'experience': 'experience',
+                        'solo': 'solo',
+                        'reiki1': 'reiki1',
+                        'reiki2': 'reiki2'
+                    };
+
+                    // Set program if available
+                    if (booking.program && programMapping[booking.program]) {
+                        programSelect.value = programMapping[booking.program];
+                    }
+                } else {
+                    console.warn('Could not fetch booking details:', booking.error);
+                }
+            } catch (error) {
+                console.warn('Error fetching booking details:', error);
+            }
+        }
+
+        document.getElementById('questionnaireForm').addEventListener('submit', async function(e) {
             e.preventDefault();
 
             const submitBtn = document.getElementById('submitBtn');
@@ -233,11 +274,19 @@
                 submittedDate: new Date().toLocaleString('en-GB')
             };
 
-            // Send email using EmailJS
-            emailjs.send('service_wc1i00c', 'YOUR_TEMPLATE_ID', formData)
-                .then(function(response) {
-                    console.log('SUCCESS!', response.status, response.text);
+            // Submit to backend API
+            try {
+                const response = await fetch(`/api/bookings/${bookingId}/questionnaire`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
 
+                const data = await response.json();
+
+                if (response.ok) {
                     // Show success message
                     successMessage.style.display = 'block';
                     errorMessage.style.display = 'none';
@@ -247,21 +296,24 @@
 
                     // Scroll to top
                     window.scrollTo({ top: 0, behavior: 'smooth' });
+                } else {
+                    throw new Error(data.error || 'Failed to submit questionnaire');
+                }
+            } catch (error) {
+                console.error('FAILED...', error);
 
-                }, function(error) {
-                    console.log('FAILED...', error);
+                // Show error message
+                errorMessage.innerHTML = `<p>There was an error submitting your questionnaire: ${error.message}. Please try again or contact us directly at <a href="tel:07846633248">07846 633248</a>.</p>`;
+                errorMessage.style.display = 'block';
+                successMessage.style.display = 'none';
 
-                    // Show error message
-                    errorMessage.style.display = 'block';
-                    successMessage.style.display = 'none';
+                // Re-enable submit button
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit Questionnaire';
 
-                    // Re-enable submit button
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = 'Submit Questionnaire';
-
-                    // Scroll to error
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                });
+                // Scroll to error
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
         });
     </script>
 </body>

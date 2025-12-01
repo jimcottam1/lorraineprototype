@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Booking = require('../models/Booking');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-const { sendPaymentConfirmation, sendPaymentNotificationToAdmin } = require('../utils/email');
+const { sendPaymentConfirmation, sendPaymentNotificationToAdmin, sendQuestionnaireInvitation } = require('../utils/email');
 
 // Stripe webhook handler
 router.post('/stripe', express.raw({ type: 'application/json' }), async (req, res) => {
@@ -82,6 +82,9 @@ async function handleCheckoutComplete(session) {
 
     // Send payment notification to admin
     await sendPaymentNotificationToAdmin(booking);
+
+    // Send questionnaire invitation email to customer
+    await sendQuestionnaireInvitation(booking);
 
   } catch (error) {
     console.error('Error handling checkout complete:', error);

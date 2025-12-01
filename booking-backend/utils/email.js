@@ -148,6 +148,20 @@ const sendPaymentNotificationToAdmin = async (booking) => {
   await sendEmailFromTemplate('payment_notification_admin', process.env.ADMIN_EMAIL, data);
 };
 
+const sendQuestionnaireInvitation = async (booking) => {
+  console.log('📧 Sending questionnaire invitation to customer...');
+
+  const questionnaireUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/questionnaire.html?booking_id=${booking._id}`;
+
+  const data = {
+    fullName: booking.fullName,
+    programName: booking.programName,
+    questionnaireUrl: questionnaireUrl
+  };
+
+  await sendEmailFromTemplate('questionnaire_invitation', booking.email, data);
+};
+
 const sendTestEmail = async (template, testEmail) => {
   console.log('📧 Sending test email...');
 
@@ -177,6 +191,7 @@ const sendTestEmail = async (template, testEmail) => {
       minute: '2-digit'
     }),
     paymentUrl: 'https://checkout.stripe.com/test',
+    questionnaireUrl: 'https://yourdomain.com/questionnaire.html?booking_id=123',
     adminPanelUrl: process.env.ADMIN_PANEL_URL || 'http://localhost:3000/admin'
   };
 
@@ -203,5 +218,6 @@ module.exports = {
   sendSessionConfirmation,
   sendBookingConfirmationToCustomer,
   sendPaymentNotificationToAdmin,
+  sendQuestionnaireInvitation,
   sendTestEmail
 };

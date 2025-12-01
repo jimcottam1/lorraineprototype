@@ -10,6 +10,7 @@ const emailTemplateSchema = new mongoose.Schema({
       'booking_confirmation_customer',
       'payment_confirmation_customer',
       'payment_notification_admin',
+      'questionnaire_invitation',
       'session_confirmation_customer'
     ]
   },

@@ -147,6 +147,7 @@ function displayBookings(bookings) {
             <td>
                 <strong>${booking.fullName}</strong><br>
                 <small>${booking.email}</small>
+                ${booking.questionnaireCompleted ? '<br><span style="font-size: 11px; color: #2e7d32;">📋 Questionnaire ✓</span>' : ''}
             </td>
             <td>${booking.programName}</td>
             <td>£${booking.price}</td>
@@ -255,13 +256,49 @@ function showBookingModal(booking) {
             </div>
         `}
         <div class="detail-row">
-            <label>Questionnaire</label>
-            <p>${booking.questionnaireCompleted ? '✅ Completed' : '❌ Not completed'}</p>
+            <label>Questionnaire Status</label>
+            <p>${booking.questionnaireCompleted ? '✅ Completed' : '❌ Not completed yet'}</p>
         </div>
-        ${booking.questionnaireCompleted ? `
-            <div class="detail-row">
-                <label>Questionnaire Data</label>
-                <pre style="background: #f5f5f5; padding: 10px; border-radius: 4px; overflow: auto;">${JSON.stringify(booking.questionnaireData, null, 2)}</pre>
+        ${booking.questionnaireCompleted && booking.questionnaireData ? `
+            <div class="detail-row" style="display: block;">
+                <label style="font-size: 16px; font-weight: 700; color: #2c5f4f; margin-bottom: 15px; display: block; border-bottom: 2px solid #e0e0e0; padding-bottom: 10px;">Wellness Questionnaire Responses</label>
+                <div style="background: #f9f9f9; padding: 20px; border-radius: 8px;">
+                    ${booking.questionnaireData.experience ? `
+                        <div style="margin-bottom: 20px;">
+                            <strong style="color: #555;">Previous Reiki Experience:</strong>
+                            <p style="margin: 5px 0 0 0; color: #333;">${booking.questionnaireData.experience === 'yes' ? 'Yes' : 'No'}</p>
+                        </div>
+                    ` : ''}
+                    ${booking.questionnaireData.goals ? `
+                        <div style="margin-bottom: 20px;">
+                            <strong style="color: #555;">Wellness Goals:</strong>
+                            <p style="margin: 5px 0 0 0; color: #333; white-space: pre-wrap;">${booking.questionnaireData.goals}</p>
+                        </div>
+                    ` : ''}
+                    ${booking.questionnaireData.health ? `
+                        <div style="margin-bottom: 20px;">
+                            <strong style="color: #555;">Health Conditions:</strong>
+                            <p style="margin: 5px 0 0 0; color: #333; white-space: pre-wrap;">${booking.questionnaireData.health}</p>
+                        </div>
+                    ` : ''}
+                    ${booking.questionnaireData.concerns ? `
+                        <div style="margin-bottom: 20px;">
+                            <strong style="color: #555;">Specific Concerns/Questions:</strong>
+                            <p style="margin: 5px 0 0 0; color: #333; white-space: pre-wrap;">${booking.questionnaireData.concerns}</p>
+                        </div>
+                    ` : ''}
+                    ${booking.questionnaireData.preferences ? `
+                        <div style="margin-bottom: 20px;">
+                            <strong style="color: #555;">Preferred Contact Method:</strong>
+                            <p style="margin: 5px 0 0 0; color: #333;">${booking.questionnaireData.preferences}</p>
+                        </div>
+                    ` : ''}
+                    ${booking.questionnaireData.submittedDate ? `
+                        <div style="margin-top: 25px; padding-top: 15px; border-top: 1px solid #ddd;">
+                            <small style="color: #999;">Submitted: ${booking.questionnaireData.submittedDate}</small>
+                        </div>
+                    ` : ''}
+                </div>
             </div>
         ` : ''}
         <div class="detail-row">

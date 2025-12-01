@@ -214,14 +214,13 @@ const defaultTemplates = [
       </table>
 
       <h3 style="color: #333; font-size: 16px; margin: 25px 0 10px 0;">What's Next?</h3>
-      <p style="margin: 0 0 10px 0; color: #666; font-size: 14px;">Lorraine will contact you within 24 hours to:</p>
+      <p style="margin: 0 0 10px 0; color: #666; font-size: 14px;">You'll receive a separate email shortly with:</p>
       <ol style="margin: 0; padding-left: 20px; color: #666; font-size: 14px; line-height: 1.8;">
-        <li>Confirm your session time</li>
-        <li>Send you a health questionnaire</li>
-        <li>Answer any questions you may have</li>
+        <li>A wellness questionnaire to complete</li>
+        <li>Information about your upcoming session</li>
       </ol>
 
-      <p style="margin: 25px 0 0 0; color: #666; font-size: 14px; line-height: 1.6;">If you have any immediate questions, feel free to call Lorraine at <strong style="color: #2c5f4f;">07846 633248</strong>.</p>
+      <p style="margin: 25px 0 0 0; color: #666; font-size: 14px; line-height: 1.6;">Lorraine will contact you within 24 hours to confirm your session time. If you have any immediate questions, feel free to call her at <strong style="color: #2c5f4f;">07846 633248</strong>.</p>
 
       <div style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #f0f8f5 0%, #e0f2f1 100%); border-radius: 8px; text-align: center;">
         <p style="margin: 0; color: #2c5f4f; font-size: 16px; font-style: italic;">Looking forward to supporting you on your wellness journey!</p>
@@ -308,6 +307,55 @@ const defaultTemplates = [
       { variable: '{{preferredSlot}}', description: 'Preferred time slot' },
       { variable: '{{notes}}', description: 'Client notes' },
       { variable: '{{adminPanelUrl}}', description: 'Link to admin panel' }
+    ]
+  },
+  {
+    templateId: 'questionnaire_invitation',
+    name: 'Questionnaire Invitation (Customer)',
+    description: 'Email sent to customer after payment with questionnaire link',
+    subject: 'Complete Your Wellness Questionnaire',
+    htmlBody: emailLayout(`
+      <h2 style="margin: 0 0 10px 0; color: #2c5f4f; font-size: 22px;">Hi {{fullName}},</h2>
+      <p style="margin: 0 0 25px 0; color: #666; font-size: 16px; line-height: 1.6;">Thank you for booking your {{programName}} session!</p>
+
+      <div style="background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%); padding: 25px; border-radius: 8px; margin: 25px 0; border-left: 4px solid #ff9800;">
+        <h3 style="margin: 0 0 10px 0; color: #e65100; font-size: 18px;">📋 Next Step: Complete Your Wellness Questionnaire</h3>
+        <p style="margin: 0 0 15px 0; color: #333; font-size: 14px; line-height: 1.6;">To help Lorraine personalize your Reiki experience and ensure the best possible session for you, please take a few minutes to complete your wellness questionnaire.</p>
+
+        <p style="margin: 0 0 15px 0; color: #333; font-size: 14px;">The questionnaire covers:</p>
+        <ul style="margin: 0 0 15px 0; padding-left: 20px; color: #333; font-size: 14px; line-height: 1.8;">
+          <li>Your wellness goals and intentions</li>
+          <li>Any health conditions or concerns</li>
+          <li>Your preferred communication method</li>
+        </ul>
+
+        <div style="text-align: center; margin-top: 20px;">
+          <a href="{{questionnaireUrl}}" style="display: inline-block; background-color: #ff9800; color: white; padding: 16px 40px; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px;">Complete Questionnaire Now</a>
+        </div>
+      </div>
+
+      <div style="background: #f9f9f9; padding: 20px; border-radius: 8px; margin: 25px 0;">
+        <h3 style="margin: 0 0 10px 0; color: #333; font-size: 16px;">Why Complete the Questionnaire?</h3>
+        <p style="margin: 0; color: #666; font-size: 14px; line-height: 1.6;">Your responses help Lorraine understand your unique needs and customize your Reiki session to address your specific wellness goals. All information is kept strictly confidential.</p>
+      </div>
+
+      <h3 style="color: #333; font-size: 16px; margin: 25px 0 10px 0;">What Happens Next?</h3>
+      <ol style="margin: 0; padding-left: 20px; color: #666; font-size: 14px; line-height: 1.8;">
+        <li>Complete your wellness questionnaire (takes 5 minutes)</li>
+        <li>Lorraine will review your responses</li>
+        <li>She'll contact you within 24 hours to confirm your session time</li>
+      </ol>
+
+      <p style="margin: 25px 0 0 0; color: #666; font-size: 14px; line-height: 1.6;">If you have any questions, feel free to call Lorraine at <strong style="color: #2c5f4f;">07846 633248</strong>.</p>
+
+      <div style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #f0f8f5 0%, #e0f2f1 100%); border-radius: 8px; text-align: center;">
+        <p style="margin: 0; color: #2c5f4f; font-size: 16px; font-style: italic;">Looking forward to supporting you on your wellness journey!</p>
+      </div>
+    `),
+    availableVariables: [
+      { variable: '{{fullName}}', description: 'Client full name' },
+      { variable: '{{programName}}', description: 'Program name' },
+      { variable: '{{questionnaireUrl}}', description: 'Link to wellness questionnaire with booking ID' }
     ]
   },
   {
