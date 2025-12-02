@@ -1110,6 +1110,7 @@ async function loadSettings() {
         document.getElementById('heroDescription').value = settings.heroDescription;
         document.getElementById('phone').value = settings.phone;
         document.getElementById('location').value = settings.location;
+        document.getElementById('adminEmail').value = settings.adminEmail || '';
         document.getElementById('businessName').value = settings.businessName;
         document.getElementById('businessTagline').value = settings.businessTagline;
         document.getElementById('practitionerName').value = settings.practitionerName;
@@ -1133,6 +1134,7 @@ document.getElementById('settingsForm').addEventListener('submit', async (e) => 
         heroDescription: document.getElementById('heroDescription').value,
         phone: document.getElementById('phone').value,
         location: document.getElementById('location').value,
+        adminEmail: document.getElementById('adminEmail').value,
         businessName: document.getElementById('businessName').value,
         businessTagline: document.getElementById('businessTagline').value,
         practitionerName: document.getElementById('practitionerName').value,

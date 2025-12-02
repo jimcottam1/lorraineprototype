@@ -35,7 +35,12 @@
       "Bash(start http://localhost:3000/booking.html)",
       "Bash(cmd /c \"taskkill /F /PID 5384\")",
       "Bash(copy email.js email.js.backup)",
-      "Bash(cmd /c \"copy email.js email.js.backup\")"
+      "Bash(cmd /c \"copy email.js email.js.backup\")",
+      "Bash(start http://localhost:3000/questionnaire.html?booking_id=692df8949e429b3c97389ee5)",
+      "Bash(cmd /c \"taskkill /F /PID 13712\")",
+      "Bash(move test-questionnaire-flow.js booking-backendtestQuestionnaireFlow.js)",
+      "Bash(start:*)",
+      "Bash(git checkout public/index.html)"
     ],
     "deny": [],
     "ask": []
