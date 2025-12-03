@@ -30,6 +30,10 @@ const siteSettingsSchema = new mongoose.Schema({
     type: String,
     default: 'Wallington'
   },
+  adminEmail: {
+    type: String,
+    default: process.env.ADMIN_EMAIL || 'admin@example.com'
+  },
   businessName: {
     type: String,
     default: 'Happiness in Harmony'

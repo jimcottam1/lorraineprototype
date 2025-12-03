@@ -1,11 +1,23 @@
 // Email notification system using Resend
 const { Resend } = require('resend');
 const EmailTemplate = require('../models/EmailTemplate');
+const SiteSettings = require('../models/SiteSettings');
 
 // Initialize Resend with API key
 const resend = process.env.RESEND_API_KEY
   ? new Resend(process.env.RESEND_API_KEY)
   : null;
+
+// Helper function to get admin email from settings or environment variable
+async function getAdminEmail() {
+  try {
+    const settings = await SiteSettings.findById('site-settings');
+    return settings?.adminEmail || process.env.ADMIN_EMAIL || 'admin@example.com';
+  } catch (error) {
+    console.warn('⚠️  Could not fetch admin email from settings, using environment variable');
+    return process.env.ADMIN_EMAIL || 'admin@example.com';
+  }
+}
 
 // Simple template variable replacement (supports {{variable}} and {{#if variable}}...{{/if}})
 function replaceTemplateVariables(template, data) {
@@ -72,6 +84,8 @@ async function sendEmailFromTemplate(templateId, recipient, data) {
 const sendBookingNotification = async (booking) => {
   console.log('📧 Sending booking notification to admin...');
 
+  const adminEmail = await getAdminEmail();
+
   const data = {
     fullName: booking.fullName,
     email: booking.email,
@@ -85,7 +99,7 @@ const sendBookingNotification = async (booking) => {
     adminPanelUrl: process.env.ADMIN_PANEL_URL || 'http://localhost:3000/admin'
   };
 
-  await sendEmailFromTemplate('booking_notification_admin', process.env.ADMIN_EMAIL, data);
+  await sendEmailFromTemplate('booking_notification_admin', adminEmail, data);
 };
 
 const sendPaymentConfirmation = async (booking) => {
@@ -134,6 +148,8 @@ const sendBookingConfirmationToCustomer = async (booking, paymentUrl) => {
 const sendPaymentNotificationToAdmin = async (booking) => {
   console.log('📧 Sending payment notification to admin...');
 
+  const adminEmail = await getAdminEmail();
+
   const formattedDate = booking.paidAt ? new Date(booking.paidAt).toLocaleString('en-GB', {
     day: 'numeric',
     month: 'long',
@@ -155,7 +171,7 @@ const sendPaymentNotificationToAdmin = async (booking) => {
     adminPanelUrl: process.env.ADMIN_PANEL_URL || 'http://localhost:3000/admin'
   };
 
-  await sendEmailFromTemplate('payment_notification_admin', process.env.ADMIN_EMAIL, data);
+  await sendEmailFromTemplate('payment_notification_admin', adminEmail, data);
 };
 
 const sendQuestionnaireInvitation = async (booking) => {
