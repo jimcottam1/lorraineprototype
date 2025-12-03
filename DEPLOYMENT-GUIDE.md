@@ -211,16 +211,16 @@ When clicking "View" on any booking, Lorraine sees:
 
 ## Lorraine's Fit & Finish Requests
 
-### Content Updates Pending
-The following refinements need to be made based on Lorraine's feedback:
+### Content Updates Completed
+The following refinements have been made based on Lorraine's feedback:
 
 **1. Treatment Plans Section**
-- [ ] Remove case study figures at price points for Weight Loss and Menopause programmes
-- [ ] Change "Pathway to Wellness" to be marked as "Popular" instead of current programme
-- [ ] Update spelling throughout site to use British English "programme" (not "program")
+- ✅ Removed case study figures at price points for Weight Loss and Menopause programmes
+- ✅ Changed "Pathway to Wellness" to be marked as "Popular" instead of other programmes
+- ✅ Updated spelling throughout site to use British English "programme" (not "program")
 
 **2. Medical Disclaimer Update**
-- [ ] Change "Please Note:" text to:
+- ✅ Changed "Please Note:" text to:
   > "Reiki is complementary to medical treatment and it is advised you never stop medication without consulting your GP or healthcare professional."
 
 **3. Upcoming Content**
@@ -229,7 +229,7 @@ Lorraine plans to add:
 - Guided meditation audio/video
 - Draft meditation already available for testing purposes
 
-These updates will ensure the website reflects Lorraine's professional approach and meets UK healthcare communication standards.
+These updates ensure the website reflects Lorraine's professional approach and meets UK healthcare communication standards.
 
 ---
 
