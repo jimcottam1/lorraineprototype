@@ -35,7 +35,9 @@
       "Bash(start http://localhost:3000/booking.html)",
       "Bash(cmd /c \"taskkill /F /PID 5384\")",
       "Bash(copy email.js email.js.backup)",
-      "Bash(cmd /c \"copy email.js email.js.backup\")"
+      "Bash(cmd /c \"copy email.js email.js.backup\")",
+      "Bash(ls:*)",
+      "Bash(git restore:*)"
     ],
     "deny": [],
     "ask": []
