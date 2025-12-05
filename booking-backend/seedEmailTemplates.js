@@ -18,7 +18,7 @@ const emailLayout = (content) => `
         <table role="presentation" style="max-width: 600px; width: 100%; border-collapse: collapse; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
           <!-- Header -->
           <tr>
-            <td style="background: linear-gradient(135deg, #2c5f4f 0%, #234a3d 100%); padding: 30px; text-align: center;">
+            <td style="background-color: #2c5f4f; padding: 30px; text-align: center;">
               <h1 style="margin: 0; color: #ffffff; font-size: 24px; font-weight: 600;">Reiki Your Path to Wellness</h1>
               <p style="margin: 8px 0 0 0; color: #e0e0e0; font-size: 14px;">with Lorraine</p>
             </td>
@@ -38,10 +38,10 @@ const emailLayout = (content) => `
                 <strong>Contact Lorraine</strong>
               </p>
               <p style="margin: 0 0 5px 0; color: #666; font-size: 14px;">
-                📞 <a href="tel:07846633248" style="color: #2c5f4f; text-decoration: none;">07846 633248</a>
+                Phone: <a href="tel:07846633248" style="color: #2c5f4f; text-decoration: none;">07846 633248</a>
               </p>
               <p style="margin: 0 0 20px 0; color: #666; font-size: 14px;">
-                📍 Limerick, Ireland
+                Limerick, Ireland
               </p>
               <p style="margin: 0; color: #999; font-size: 12px;">
                 © ${new Date().getFullYear()} Reiki Your Path to Wellness. All rights reserved.
@@ -154,7 +154,7 @@ const defaultTemplates = [
         {{/if}}
       </table>
 
-      <div style="background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); padding: 20px; border-radius: 8px; margin: 25px 0; border-left: 4px solid #2196f3;">
+      <div style="background-color: #e3f2fd; padding: 20px; border-radius: 8px; margin: 25px 0; border-left: 4px solid #2196f3;">
         <h3 style="margin: 0 0 10px 0; color: #1565c0; font-size: 16px;">Next Step: Complete Your Payment</h3>
         <p style="margin: 0 0 15px 0; color: #333; font-size: 14px;">To secure your booking, please complete payment by clicking the button below:</p>
 
@@ -191,10 +191,10 @@ const defaultTemplates = [
     description: 'Email sent to customer after successful payment',
     subject: 'Payment Confirmed - Your Reiki Session Awaits',
     htmlBody: emailLayout(`
-      <h2 style="margin: 0 0 10px 0; color: #2c5f4f; font-size: 22px;">Thank You, {{fullName}}!</h2>
+      <h2 style="margin: 0 0 10px 0; color: #2c5f4f; font-size: 22px;">Thank You, {{fullName}}</h2>
 
       <div style="background-color: #e8f5e9; padding: 20px; border-radius: 8px; border-left: 4px solid #4caf50; margin: 20px 0;">
-        <p style="margin: 0; color: #2e7d32; font-weight: 600; font-size: 16px;">✓ Your payment has been received successfully.</p>
+        <p style="margin: 0; color: #2e7d32; font-weight: 600; font-size: 16px;">Your payment has been received successfully.</p>
       </div>
 
       <h3 style="color: #333; font-size: 16px; margin: 20px 0 10px 0;">Booking Details</h3>
@@ -222,8 +222,8 @@ const defaultTemplates = [
 
       <p style="margin: 25px 0 0 0; color: #666; font-size: 14px; line-height: 1.6;">Lorraine will contact you within 24 hours to confirm your session time. If you have any immediate questions, feel free to call her at <strong style="color: #2c5f4f;">07846 633248</strong>.</p>
 
-      <div style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #f0f8f5 0%, #e0f2f1 100%); border-radius: 8px; text-align: center;">
-        <p style="margin: 0; color: #2c5f4f; font-size: 16px; font-style: italic;">Looking forward to supporting you on your wellness journey!</p>
+      <div style="margin-top: 30px; padding: 20px; background-color: #f0f8f5; border-radius: 8px; text-align: center;">
+        <p style="margin: 0; color: #2c5f4f; font-size: 16px; font-style: italic;">Looking forward to supporting you on your wellness journey.</p>
       </div>
     `),
     availableVariables: [
@@ -236,12 +236,12 @@ const defaultTemplates = [
     templateId: 'payment_notification_admin',
     name: 'Payment Notification (Admin)',
     description: 'Email sent to admin when payment is received',
-    subject: '💰 Payment Received: {{fullName}} - £{{price}}',
+    subject: 'Payment Received: {{fullName}} - £{{price}}',
     htmlBody: emailLayout(`
-      <h2 style="margin: 0 0 10px 0; color: #2c5f4f; font-size: 22px;">✅ Payment Received</h2>
+      <h2 style="margin: 0 0 10px 0; color: #2c5f4f; font-size: 22px;">Payment Received</h2>
 
       <div style="background-color: #e8f5e9; padding: 15px; border-radius: 6px; border-left: 4px solid #4caf50; margin-bottom: 25px;">
-        <p style="margin: 0; color: #2e7d32; font-weight: 600;">A customer has successfully completed their payment!</p>
+        <p style="margin: 0; color: #2e7d32; font-weight: 600;">A customer has successfully completed their payment.</p>
       </div>
 
       <h3 style="color: #333; font-size: 16px; margin: 20px 0 10px 0;">Client Details</h3>
@@ -318,8 +318,8 @@ const defaultTemplates = [
       <h2 style="margin: 0 0 10px 0; color: #2c5f4f; font-size: 22px;">Hi {{fullName}},</h2>
       <p style="margin: 0 0 25px 0; color: #666; font-size: 16px; line-height: 1.6;">Thank you for booking your {{programName}} session!</p>
 
-      <div style="background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%); padding: 25px; border-radius: 8px; margin: 25px 0; border-left: 4px solid #ff9800;">
-        <h3 style="margin: 0 0 10px 0; color: #e65100; font-size: 18px;">📋 Next Step: Complete Your Wellness Questionnaire</h3>
+      <div style="background-color: #fff3e0; padding: 25px; border-radius: 8px; margin: 25px 0; border-left: 4px solid #ff9800;">
+        <h3 style="margin: 0 0 10px 0; color: #e65100; font-size: 18px;">Next Step: Complete Your Wellness Questionnaire</h3>
         <p style="margin: 0 0 15px 0; color: #333; font-size: 14px; line-height: 1.6;">To help Lorraine personalize your Reiki experience and ensure the best possible session for you, please take a few minutes to complete your wellness questionnaire.</p>
 
         <p style="margin: 0 0 15px 0; color: #333; font-size: 14px;">The questionnaire covers:</p>
@@ -348,8 +348,8 @@ const defaultTemplates = [
 
       <p style="margin: 25px 0 0 0; color: #666; font-size: 14px; line-height: 1.6;">If you have any questions, feel free to call Lorraine at <strong style="color: #2c5f4f;">07846 633248</strong>.</p>
 
-      <div style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #f0f8f5 0%, #e0f2f1 100%); border-radius: 8px; text-align: center;">
-        <p style="margin: 0; color: #2c5f4f; font-size: 16px; font-style: italic;">Looking forward to supporting you on your wellness journey!</p>
+      <div style="margin-top: 30px; padding: 20px; background-color: #f0f8f5; border-radius: 8px; text-align: center;">
+        <p style="margin: 0; color: #2c5f4f; font-size: 16px; font-style: italic;">Looking forward to supporting you on your wellness journey.</p>
       </div>
     `),
     availableVariables: [
@@ -362,13 +362,13 @@ const defaultTemplates = [
     templateId: 'session_confirmation_customer',
     name: 'Session Confirmation (Customer)',
     description: 'Email sent to customer when session date/time is confirmed',
-    subject: 'Your Reiki Session is Confirmed!',
+    subject: 'Your Reiki Session is Confirmed',
     htmlBody: emailLayout(`
       <h2 style="margin: 0 0 10px 0; color: #2c5f4f; font-size: 22px;">Session Confirmed</h2>
       <p style="margin: 0 0 25px 0; color: #666; font-size: 16px;">Dear {{fullName}},</p>
 
       <div style="background-color: #e8f5e9; padding: 20px; border-radius: 8px; border-left: 4px solid #4caf50; margin: 20px 0;">
-        <p style="margin: 0; color: #2e7d32; font-weight: 600; font-size: 16px;">✓ Your session has been confirmed!</p>
+        <p style="margin: 0; color: #2e7d32; font-weight: 600; font-size: 16px;">Your session has been confirmed.</p>
       </div>
 
       <h3 style="color: #333; font-size: 16px; margin: 20px 0 10px 0;">Session Details</h3>
@@ -387,19 +387,19 @@ const defaultTemplates = [
         </tr>
       </table>
 
-      <div style="background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); padding: 20px; border-radius: 8px; margin: 25px 0;">
+      <div style="background-color: #e3f2fd; padding: 20px; border-radius: 8px; margin: 25px 0;">
         <h3 style="margin: 0 0 10px 0; color: #1565c0; font-size: 16px;">What to Bring</h3>
         <p style="margin: 0; color: #333; font-size: 14px; line-height: 1.6;">Please come comfortable and relaxed. Wear loose, comfortable clothing.</p>
       </div>
 
-      <div style="background: #fff3e0; padding: 20px; border-radius: 8px; border-left: 4px solid #ff9800; margin: 25px 0;">
+      <div style="background-color: #fff3e0; padding: 20px; border-radius: 8px; border-left: 4px solid #ff9800; margin: 25px 0;">
         <h3 style="margin: 0 0 10px 0; color: #e65100; font-size: 16px;">Need to Reschedule?</h3>
         <p style="margin: 0 0 10px 0; color: #333; font-size: 14px;">If you need to reschedule, please contact Lorraine at least 24 hours in advance:</p>
         <p style="margin: 0; color: #333; font-size: 14px;"><strong>Phone:</strong> <a href="tel:07846633248" style="color: #2c5f4f; text-decoration: none;">07846 633248</a></p>
       </div>
 
-      <div style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #f0f8f5 0%, #e0f2f1 100%); border-radius: 8px; text-align: center;">
-        <p style="margin: 0; color: #2c5f4f; font-size: 16px; font-style: italic;">Looking forward to seeing you!</p>
+      <div style="margin-top: 30px; padding: 20px; background-color: #f0f8f5; border-radius: 8px; text-align: center;">
+        <p style="margin: 0; color: #2c5f4f; font-size: 16px; font-style: italic;">Looking forward to seeing you.</p>
       </div>
     `),
     availableVariables: [
