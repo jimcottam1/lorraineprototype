@@ -434,7 +434,6 @@ function showTab(tabName) {
     document.getElementById('slotsTab').style.display = tabName === 'slots' ? 'block' : 'none';
     document.getElementById('programsTab').style.display = tabName === 'programs' ? 'block' : 'none';
     document.getElementById('testimonialsTab').style.display = tabName === 'testimonials' ? 'block' : 'none';
-    document.getElementById('emailsTab').style.display = tabName === 'emails' ? 'block' : 'none';
     document.getElementById('settingsTab').style.display = tabName === 'settings' ? 'block' : 'none';
 
     // Load data when switching to tabs
