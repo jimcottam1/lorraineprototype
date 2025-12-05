@@ -220,6 +220,12 @@ const EMAIL_TEMPLATES = {
           <td style="padding: 12px; color: #666; font-size: 14px;"><strong>Amount Paid:</strong></td>
           <td style="padding: 12px; color: #2e7d32; font-size: 14px; font-weight: 600;">£{{price}}</td>
         </tr>
+        {{#if preferredSlot}}
+        <tr>
+          <td style="padding: 12px; color: #666; font-size: 14px;"><strong>Preferred Time:</strong></td>
+          <td style="padding: 12px; color: #333; font-size: 14px;">{{preferredSlot}}</td>
+        </tr>
+        {{/if}}
       </table>
 
       <h3 style="color: #333; font-size: 16px; margin: 25px 0 10px 0;">What's Next?</h3>
@@ -305,7 +311,11 @@ const EMAIL_TEMPLATES = {
     subject: 'Complete Your Wellness Questionnaire',
     html: emailLayout(`
       <h2 style="margin: 0 0 10px 0; color: #2c5f4f; font-size: 22px;">Hi {{fullName}},</h2>
-      <p style="margin: 0 0 25px 0; color: #666; font-size: 16px; line-height: 1.6;">Thank you for booking your {{programName}} session!</p>
+      <p style="margin: 0 0 10px 0; color: #666; font-size: 16px; line-height: 1.6;">Thank you for booking your {{programName}} session!</p>
+
+      {{#if preferredSlot}}
+      <p style="margin: 0 0 25px 0; color: #666; font-size: 14px; line-height: 1.6;"><strong>Your preferred time:</strong> {{preferredSlot}}</p>
+      {{/if}}
 
       <div style="background-color: #fff3e0; padding: 25px; border-radius: 8px; margin: 25px 0; border-left: 4px solid #ff9800;">
         <h3 style="margin: 0 0 10px 0; color: #e65100; font-size: 18px;">Next Step: Complete Your Wellness Questionnaire</h3>
@@ -455,7 +465,8 @@ const sendPaymentConfirmation = async (booking) => {
   const data = {
     fullName: booking.fullName,
     programName: booking.programName,
-    price: booking.price
+    price: booking.price,
+    preferredSlot: booking.preferredSlot || ''
   };
 
   await sendEmail('payment_confirmation_customer', booking.email, '', data);
@@ -529,7 +540,8 @@ const sendQuestionnaireInvitation = async (booking) => {
   const data = {
     fullName: booking.fullName,
     programName: booking.programName,
-    questionnaireUrl: questionnaireUrl
+    questionnaireUrl: questionnaireUrl,
+    preferredSlot: booking.preferredSlot || ''
   };
 
   await sendEmail('questionnaire_invitation', booking.email, '', data);
