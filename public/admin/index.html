@@ -616,7 +616,6 @@
                 <button class="tab-btn" onclick="showTab('slots')">📅 Manage Slots</button>
                 <button class="tab-btn" onclick="showTab('programs')">🎯 Programs</button>
                 <button class="tab-btn" onclick="showTab('testimonials')">💬 Testimonials</button>
-                <button class="tab-btn" onclick="showTab('emails')">📧 Email Templates</button>
                 <button class="tab-btn" onclick="showTab('settings')">⚙️ Site Settings</button>
             </div>
 
@@ -965,27 +964,6 @@
             </div>
             <!-- End Site Settings Tab -->
 
-            <!-- Email Templates Tab -->
-            <div id="emailsTab" class="hidden">
-                <div style="margin-bottom: 20px;">
-                    <h2 style="margin-bottom: 10px;">Email Templates</h2>
-                    <p style="color: #666;">Customize the emails sent to customers and admins. Use {{variable}} syntax for dynamic content.</p>
-                </div>
-
-                <div id="emailTemplatesList"></div>
-
-                <!-- Template Editor Modal (appears when editing) -->
-                <div id="templateEditorModal" class="modal">
-                    <div class="modal-content" style="max-width: 900px;">
-                        <div class="modal-header">
-                            <h2 id="templateEditorTitle">Edit Email Template</h2>
-                            <button class="close-modal" onclick="closeTemplateEditor()">&times;</button>
-                        </div>
-                        <div id="templateEditorContent"></div>
-                    </div>
-                </div>
-            </div>
-            <!-- End Email Templates Tab -->
         </div>
     </div>
 
