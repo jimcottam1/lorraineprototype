@@ -5,16 +5,40 @@ const API_URL = window.location.hostname === 'localhost'
     ? 'http://localhost:3000/api'
     : 'https://lorraine-booking-backend.onrender.com/api';
 
-// Program pricing
-const PROGRAM_PRICES = {
-    'experience': 64,
-    'solo': 70,
-    'wellness': 256,
-    'weightloss': 256,
-    'menopause': 256,
-    'reiki1': 0,
-    'reiki2': 0
-};
+// Cache for programs loaded from API
+let programsCache = null;
+
+// Load programs from API
+async function loadPrograms() {
+    if (programsCache) return programsCache;
+
+    try {
+        const response = await fetch(`${API_URL}/content/programs?active=true`);
+        if (!response.ok) throw new Error('Failed to load programs');
+        programsCache = await response.json();
+        return programsCache;
+    } catch (error) {
+        console.error('Error loading programs:', error);
+        return [];
+    }
+}
+
+// Get program details by ID
+async function getProgramById(programId) {
+    const programs = await loadPrograms();
+    return programs.find(p => p.id === programId);
+}
+
+// Parse price from program
+function parsePrice(priceString) {
+    if (!priceString) return 0;
+    if (typeof priceString === 'string' && priceString.toLowerCase().includes('free')) return 0;
+    if (typeof priceString === 'number') return priceString;
+
+    const cleaned = priceString.replace(/[£$,\s]/g, '');
+    const parsed = parseFloat(cleaned);
+    return isNaN(parsed) ? 0 : parsed;
+}
 
 // Handle booking form submission
 async function submitBooking(formData) {
@@ -92,19 +116,29 @@ document.addEventListener('DOMContentLoaded', () => {
         // Update price display when program changes
         const programSelect = document.getElementById('program');
         if (programSelect) {
-            programSelect.addEventListener('change', (e) => {
-                const program = e.target.value;
-                const price = PROGRAM_PRICES[program];
+            programSelect.addEventListener('change', async (e) => {
+                const programId = e.target.value;
                 const priceDisplay = document.getElementById('priceDisplay');
 
                 if (priceDisplay) {
-                    if (price === 0) {
-                        priceDisplay.textContent = 'FREE Consultation';
-                    } else {
-                        priceDisplay.textContent = `£${price}`;
+                    try {
+                        const program = await getProgramById(programId);
+                        if (program) {
+                            const price = parsePrice(program.price);
+                            if (price === 0) {
+                                priceDisplay.textContent = 'FREE Consultation';
+                            } else {
+                                priceDisplay.textContent = `£${price}`;
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Error updating price display:', error);
                     }
                 }
             });
+
+            // Load programs on page load to cache them
+            loadPrograms();
         }
     }
 });

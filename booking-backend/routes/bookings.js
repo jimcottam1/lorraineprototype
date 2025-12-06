@@ -1,29 +1,30 @@
 const express = require('express');
 const router = express.Router();
 const Booking = require('../models/Booking');
+const Program = require('../models/Program');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const { sendBookingNotification } = require('../utils/email');
 
-// Program pricing
-const PROGRAM_PRICES = {
-  'experience': 64,
-  'solo': 70,
-  'wellness': 256,
-  'weightloss': 256,
-  'menopause': 256,
-  'reiki1': 0,
-  'reiki2': 0
-};
+// Helper function to parse price from various formats
+function parsePrice(priceString) {
+  if (!priceString) return 0;
 
-const PROGRAM_NAMES = {
-  'experience': 'Experience Reiki Session',
-  'solo': 'Solo Follow-Up Session',
-  'wellness': 'Path to Wellness - 4-Week Program',
-  'weightloss': 'Weight Loss & Wellbeing - 4-Week Program',
-  'menopause': 'Pathway Through Menopause - 4-Week Program',
-  'reiki1': 'Reiki Level One Course - FREE Consultation',
-  'reiki2': 'Reiki Level Two Course - FREE Consultation'
-};
+  // Handle "FREE", "Free", etc.
+  if (typeof priceString === 'string' && priceString.toLowerCase().includes('free')) {
+    return 0;
+  }
+
+  // Handle numeric values
+  if (typeof priceString === 'number') {
+    return priceString;
+  }
+
+  // Parse string - remove £, $, commas, spaces
+  const cleaned = priceString.replace(/[£$,\s]/g, '');
+  const parsed = parseFloat(cleaned);
+
+  return isNaN(parsed) ? 0 : parsed;
+}
 
 // Create a new booking
 router.post('/', async (req, res) => {
@@ -44,15 +45,18 @@ router.post('/', async (req, res) => {
       });
     }
 
-    // Validate program
-    if (!PROGRAM_PRICES.hasOwnProperty(program)) {
+    // Fetch program from database
+    const programDoc = await Program.findOne({ id: program, active: true });
+
+    if (!programDoc) {
       return res.status(400).json({
-        error: 'Invalid program selected'
+        error: 'Invalid program selected or program not available'
       });
     }
 
-    const price = PROGRAM_PRICES[program];
-    const programName = PROGRAM_NAMES[program];
+    // Parse price and get program details from database
+    const price = parsePrice(programDoc.price);
+    const programName = programDoc.name;
 
     // If a slot is provided, try to book it
     let bookedSlot = null;

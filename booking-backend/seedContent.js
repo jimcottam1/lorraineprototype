@@ -118,15 +118,16 @@ async function seedData() {
             {
                 id: 'reiki1',
                 type: 'course',
-                name: 'Reiki Level One Attunement',
-                description: 'Begin your journey as a Reiki practitioner. Learn the fundamentals of Reiki, hand positions, self-healing techniques, and receive your first attunement.',
+                name: 'Reiki Level One Course - FREE Consultation',
+                description: 'Begin your journey as a Reiki practitioner. Learn the fundamentals of Reiki, hand positions, self-healing techniques, and receive your first attunement. Book a free consultation to learn more.',
                 duration: 'Full Day Course',
-                price: 'Contact for Pricing',
+                price: 'FREE',
                 features: [
                     'Understanding Reiki energy',
                     'Hand positions & techniques',
                     'Self-healing practices',
-                    'Level One attunement ceremony'
+                    'Level One attunement ceremony',
+                    'FREE consultation to discuss course details'
                 ],
                 order: 0,
                 active: true
@@ -134,15 +135,16 @@ async function seedData() {
             {
                 id: 'reiki2',
                 type: 'course',
-                name: 'Reiki Level Two Attunement',
-                description: 'Deepen your practice with sacred symbols, distance healing, and advanced techniques. Perfect for those who have completed Reiki One.',
+                name: 'Reiki Level Two Course - FREE Consultation',
+                description: 'Deepen your practice with sacred symbols, distance healing, and advanced techniques. Perfect for those who have completed Reiki One. Book a free consultation to learn more.',
                 duration: 'Full Day Course',
-                price: 'Contact for Pricing',
+                price: 'FREE',
                 features: [
                     'Three sacred Reiki symbols',
                     'Distance healing techniques',
                     'Mental & emotional healing',
-                    'Level Two attunement ceremony'
+                    'Level Two attunement ceremony',
+                    'FREE consultation to discuss course details'
                 ],
                 order: 1,
                 active: true
