@@ -105,9 +105,7 @@ router.post('/', async (req, res) => {
       const TimeSlot = require('../models/TimeSlot');
       await TimeSlot.bookSlot(slotId, booking._id);
 
-      // Update booking with confirmed date/time from slot
-      booking.confirmedDate = bookedSlot.date;
-      booking.confirmedTime = bookedSlot.time;
+      // Store as preferred slot - admin must confirm to set confirmedDate/Time
       booking.preferredSlot = `${bookedSlot.date} at ${bookedSlot.time}`;
       await booking.save();
     }
