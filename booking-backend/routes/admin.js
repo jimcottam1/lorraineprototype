@@ -3,6 +3,7 @@ const router = express.Router();
 const Booking = require('../models/Booking');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const { sendSessionConfirmation } = require('../utils/email');
 
 // Simple authentication middleware
 const authenticateAdmin = (req, res, next) => {
@@ -173,6 +174,9 @@ router.put('/bookings/:id/confirm', authenticateAdmin, async (req, res) => {
     booking.confirmedTime = confirmedTime;
     booking.status = 'confirmed';
     await booking.save();
+
+    // Send session confirmation email to customer
+    await sendSessionConfirmation(booking);
 
     res.json({
       success: true,
