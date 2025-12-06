@@ -157,6 +157,9 @@ router.put('/bookings/:id/status', authenticateAdmin, async (req, res) => {
 
 // Update confirmed session date/time
 router.put('/bookings/:id/confirm', authenticateAdmin, async (req, res) => {
+  console.log(`🎯 Confirm endpoint hit for booking ${req.params.id}`);
+  console.log(`📅 Received data:`, req.body);
+
   try {
     const { confirmedDate, confirmedTime } = req.body;
 
